@@ -1,0 +1,73 @@
+@startuml "Secuencia - Generar Reporte de Solvencia"
+
+autonumber
+skinparam BoxPadding 10
+skinparam ParticipantPadding 10
+
+' Estilo profesional y limpio
+skinparam actorStyle awesome
+skinparam sequence {
+    LifeLineBorderColor #2B88D9
+    LifeLineBackgroundColor #F3F9FF
+    ParticipantBorderColor #2B88D9
+    ParticipantBackgroundColor #F3F9FF
+    BoxBorderColor #2B88D9
+    BoxBackgroundColor #F8F9FA
+}
+
+actor Usuario as usr
+boundary UI_DetalleEntidad as ui
+control ReporteController as ctrl
+participant SolvenciaService as srv
+database BD_Financiera as db
+entity ReporteSolvencia as rpt
+
+== Flujo principal: Generar reporte ==
+
+usr -> ui : Clic en "Ver reporte de solvencia"
+activate ui
+
+ui -> ctrl : solicitarReporte(entidadId)
+activate ctrl
+
+ctrl -> srv : crearReporte(entidadId)
+activate srv
+
+srv -> db : consultarHistorialSolvencia(entidadId)
+activate db
+db --> srv : datosCrudos (ratios, patrimonio histórico)
+deactivate db
+
+srv -> srv : procesarInformacion(datosCrudos)
+srv -> rpt ** : <<create>> ReporteSolvencia
+srv --> ctrl : reporte: ReporteSolvencia
+deactivate srv
+
+ctrl --> ui : datosFormateados
+deactivate ctrl
+
+ui --> usr : Renderiza reporte en pantalla
+deactivate ui
+
+== Flujo opcional: Descargar PDF ==
+
+opt El usuario solicita descargar el reporte
+    usr -> ui : Clic en "Descargar PDF"
+    activate ui
+
+    ui -> ctrl : solicitarDescargaPDF(entidadId)
+    activate ctrl
+
+    ctrl -> srv : exportarPDF(reporte)
+    activate srv
+    srv --> ctrl : archivoPDF: File
+    deactivate srv
+
+    ctrl --> ui : archivoPDF
+    deactivate ctrl
+
+    ui --> usr : Descarga del archivo PDF
+    deactivate ui
+end
+
+@enduml

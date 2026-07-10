@@ -1,0 +1,27 @@
+@startuml "Casos de Uso - Generar Reporte de Solvencia"
+
+' Estilo profesional y limpio
+skinparam actorStyle awesome
+skinparam packageStyle rectangle
+skinparam usecase {
+    BackgroundColor #F3F9FF
+    BorderColor #2B88D9
+    ArrowColor #2B88D9
+    ActorBorderColor #2B88D9
+    ActorBackgroundColor #F3F9FF
+}
+
+actor "Usuario" as user
+
+package "Yupay Finance" {
+    usecase "Generar reporte de solvencia" as UC_reporte
+    usecase "Consultar historial financiero en BD" as UC_historial
+    usecase "Descargar reporte en PDF" as UC_pdf
+}
+
+user --> UC_reporte
+
+UC_reporte ..> UC_historial : <<include>>
+UC_pdf ..> UC_reporte : <<extend>>
+
+@enduml

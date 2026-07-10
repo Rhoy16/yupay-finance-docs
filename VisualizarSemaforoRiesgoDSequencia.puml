@@ -1,0 +1,47 @@
+@startuml "Secuencia - Visualizar Semáforo de Riesgo"
+
+autonumber
+skinparam BoxPadding 10
+skinparam ParticipantPadding 10
+
+' Estilo profesional y limpio
+skinparam actorStyle awesome
+skinparam sequence {
+    LifeLineBorderColor #2B88D9
+    LifeLineBackgroundColor #F3F9FF
+    ParticipantBorderColor #2B88D9
+    ParticipantBackgroundColor #F3F9FF
+    BoxBorderColor #2B88D9
+    BoxBackgroundColor #F8F9FA
+}
+
+actor Usuario as usr
+boundary UI_Comparador as ui
+control RiesgoService as srv
+database BD_Financiera as db
+
+usr -> ui : Ve la lista de entidades financieras
+activate ui
+
+loop Por cada entidad renderizada
+    ui -> srv : obtenerSemaforo(entidadId)
+    activate srv
+    
+    srv -> db : consultarCalificacionSBS(entidadId)
+    activate db
+    db --> srv : calificacionSBS (ej. "A", "C", "E")
+    deactivate db
+    
+    srv -> srv : calcularSemaforoDesdeSBS(calificacionSBS)
+    note right: Lógica interna:\n- A/B -> VERDE\n- C -> AMARILLO\n- D/E -> ROJO
+    
+    srv --> ui : TipoSemaforo (VERDE | AMARILLO | ROJO)
+    deactivate srv
+    
+    ui -> ui : mostrarIconoSemaforo(color)
+end
+
+ui --> usr : Visualiza semáforos junto a cada entidad
+deactivate ui
+
+@enduml

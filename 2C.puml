@@ -1,0 +1,36 @@
+@startuml
+actor Usuario
+boundary AppYupayFinance
+control SimuladorController
+entity "nuevaSim:Simulacion" as SimulacionObj
+database BD
+
+Usuario -> AppYupayFinance: ingresarDatos(monto, moneda, plazo)
+activate AppYupayFinance
+AppYupayFinance -> SimuladorController: calcularRendimiento(monto, moneda, plazo)
+activate SimuladorController
+
+create SimulacionObj
+SimuladorController -> SimulacionObj: new(monto, moneda, plazo)
+SimuladorController -> SimulacionObj: calcularInteres()
+activate SimulacionObj
+SimulacionObj --> SimuladorController: gananciaCalculada
+deactivate SimulacionObj
+
+SimuladorController --> AppYupayFinance: retornarResultados
+deactivate SimuladorController
+AppYupayFinance --> Usuario: mostrarRendimiento y Riesgo
+
+== Acción de Guardar en Perfil ==
+Usuario -> AppYupayFinance: presionar "Guardar Simulación"
+AppYupayFinance -> SimuladorController: guardarEnHistorialUsuario(idUsuario, nuevaSim)
+activate SimuladorController
+SimuladorController -> BD: INSERT INTO simulaciones_guardadas(...)
+activate BD
+BD --> SimuladorController: confirmacionExito
+deactivate BD
+SimuladorController --> AppYupayFinance: exitoGuardado
+deactivate SimuladorController
+AppYupayFinance --> Usuario: mostrar mensaje "Simulación guardada en tu perfil"
+deactivate AppYupayFinance
+@endum

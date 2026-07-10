@@ -1,0 +1,70 @@
+@startuml "Clases - Comparar Tasas de Entidades Financieras"
+
+class Usuario {
+    - id: int
+    - nombre: String
+    - email: String
+    - suscripcion: TipoSuscripcion
+    --
+    + ingresarParametros(monto: double, plazo: int, moneda: TipoMoneda): void
+    + aplicarFiltro(filtro: Filtro): void
+    + verListado(): List~ResultadoBusqueda~
+}
+
+class ParametroBusqueda {
+    - monto: double
+    - plazo: int
+    - moneda: TipoMoneda
+    --
+    + validar(): boolean
+}
+
+class EntidadFinanciera {
+    - id: int
+    - nombre: String
+    - tipo: TipoEntidad
+    - tasa: double
+    --
+    + getTasa(): double
+}
+
+class ResultadoBusqueda {
+    - entidad: EntidadFinanciera
+    - tasa: double
+    - tipo: TipoEntidad
+    --
+    + getDetalle(): String
+}
+
+class Filtro {
+    - tipoEntidad: TipoEntidad
+    --
+    + aplicar(lista: List~EntidadFinanciera~): List~EntidadFinanciera~
+}
+
+enum TipoMoneda {
+    SOLES
+    DOLARES
+}
+
+enum TipoEntidad {
+    BANCO
+    CAJA
+    COOPERATIVA
+}
+
+enum TipoSuscripcion {
+    BASICO
+    PRO
+}
+
+Usuario "1" -down-> "1" ParametroBusqueda : search
+Usuario "1" -right-> "0..1" Filtro : filter
+Usuario -right-> TipoSuscripcion
+ParametroBusqueda "1" -down-> "1..*" ResultadoBusqueda : generates
+ResultadoBusqueda "1" -right-> "1" EntidadFinanciera : references
+ParametroBusqueda -right-> TipoMoneda
+Filtro -down-> TipoEntidad
+EntidadFinanciera -down-> TipoEntidad
+
+@enduml

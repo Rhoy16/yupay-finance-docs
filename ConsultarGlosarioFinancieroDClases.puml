@@ -1,0 +1,37 @@
+@startuml "Diagrama de Clases - Glosario Financiero"
+
+' Estilo profesional y limpio
+skinparam class {
+    BackgroundColor #F3F9FF
+    BorderColor #2B88D9
+    ArrowColor #2B88D9
+}
+
+class Usuario {
+    - id: Int
+    - nombre: String
+}
+
+class GlosarioController {
+    + buscarTermino(palabra: String): List<TerminoFinanciero>
+    + listarPopulares(): List<TerminoFinanciero>
+}
+
+class GlosarioService {
+    + buscarTermino(palabra: String): List<TerminoFinanciero>
+    + obtenerTerminosPopulares(): List<TerminoFinanciero>
+}
+
+class TerminoFinanciero {
+    - id: Int
+    - palabra: String
+    - definicionTecnica: String
+    - definicionSencilla: String
+    - ejemploPractico: String
+}
+
+Usuario --> GlosarioController : consulta
+GlosarioController ..> GlosarioService : delega
+GlosarioService ..> TerminoFinanciero : busca y retorna
+
+@enduml

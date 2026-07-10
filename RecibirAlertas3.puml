@@ -1,0 +1,53 @@
+@startuml c3_diagrama_secuencia
+
+skinparam sequenceArrowThickness 1.5
+skinparam sequenceParticipantBackgroundColor #FAFAFA
+skinparam sequenceParticipantBorderColor #333333
+skinparam sequenceLifeLineBorderColor #333333
+skinparam sequenceArrowColor #333333
+skinparam noteBorderColor #333333
+
+actor "Usuario" as Usuario
+participant "UI_Alertas" as UI
+participant "AlertaService" as Service
+participant "MonitorCambios" as Monitor
+database "BD_Financiera" as BD
+
+== Configuración inicial de alerta ==
+
+Usuario -> UI : configurarAlerta(entidad, umbral)
+UI -> Service : registrarConfiguracion(usuarioId, entidadId, umbral)
+Service -> BD : guardarConfiguracion(config)
+BD --> Service : confirmacion
+Service --> UI : alertaConfigurada
+UI --> Usuario : mostrar mensaje "Alerta activada"
+
+== Detección automática de cambio ==
+
+Monitor -> BD : consultarEntidades()
+BD --> Monitor : List<EntidadFinanciera>
+Monitor -> Monitor : compararValores(anterior, nuevo)
+
+alt [Se detecta cambio en tasa o riesgo]
+  Monitor -> BD : registrarAlerta(tipo, valorAnterior, valorNuevo)
+  BD --> Monitor : alertaId
+  Monitor -> Service : notificarUsuariosAfectados(alertaId)
+  Service -> BD : obtenerUsuariosConConfiguracion(entidadId)
+  BD --> Service : List<Usuario>
+  Service --> UI : enviarNotificacion(usuario, alerta)
+  UI --> Usuario : mostrar alerta en pantalla
+else [Sin cambios relevantes]
+  Monitor -> Monitor : continuar monitoreo
+end
+
+== Visualización de alerta ==
+
+Usuario -> UI : verDetalleAlerta(alertaId)
+UI -> Service : obtenerDetalle(alertaId)
+Service -> BD : buscarAlerta(alertaId)
+BD --> Service : Alerta
+Service -> Service : alerta.marcarLeida()
+Service --> UI : detalleAlerta
+UI --> Usuario : mostrar valorAnterior, valorNuevo y entidad
+
+@enduml

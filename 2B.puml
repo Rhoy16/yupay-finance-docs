@@ -1,0 +1,34 @@
+@startuml
+class Usuario {
+    - idUsuario: int
+    - nombre: String
+    - email: String
+    + guardarSimulacionFavorita(sim: Simulacion): void
+}
+
+class AppYupayFinance {
+    - idApp: int
+    + mostrarSimulador(): void
+    + presionarGuardar(): void
+}
+
+class Simulacion {
+    - idSimulacion: int
+    - monto: double
+    - moneda: String
+    - fechaPlazo: date
+    - gananciaCalculada: double
+    + calcularRendimiento(): double
+}
+
+class EntidadFinanciera {
+    - nombreEntidad: String
+    - nivelRiesgo: String
+    + obtenerDatosFinancieros(): void
+}
+
+Usuario "1" --> "1" AppYupayFinance
+AppYupayFinance "1" --> "*" Simulacion : gestiona
+Usuario "1" --> "*" Simulacion : almacena_favoritas
+Simulacion "*" --> "1" EntidadFinanciera : evalúa
+@endum

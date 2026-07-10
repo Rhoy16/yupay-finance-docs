@@ -1,0 +1,36 @@
+@startuml c1_caso_uso_sistema
+
+skinparam packageStyle rectangle
+skinparam usecase {
+  BackgroundColor #FAFAFA
+  BorderColor #333333
+  ArrowColor #333333
+  ActorBorderColor #333333
+  ActorBackgroundColor #FAFAFA
+}
+
+left to right direction
+
+actor "Usuario" as Usuario
+actor "Sistema\nYupay" as SistemaYupay <<system>>
+
+rectangle "Yupay Finance" {
+  usecase "Recibir alertas de\ncambio de tasa o riesgo" as UC_Main
+  usecase "Configurar\npreferencias de alerta" as UC_Config
+  usecase "Ver detalle\nde la alerta" as UC_Detalle
+  usecase "Consultar\ncambios en BD" as UC_Consulta
+}
+
+Usuario --> UC_Main
+Usuario --> UC_Config
+UC_Config .> UC_Main : <<include>>
+UC_Main .> UC_Consulta : <<include>>
+UC_Main <.. UC_Detalle : <<extend>>
+SistemaYupay --> UC_Consulta
+
+note right of UC_Main
+  Solo disponible para
+  usuarios con Plan Pro
+end note
+
+@enduml

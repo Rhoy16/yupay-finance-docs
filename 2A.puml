@@ -1,0 +1,16 @@
+@startuml
+left to right direction
+actor "Usuario" as user
+
+rectangle "Yupay Finance" {
+    usecase "Ingresar datos de simulación" as UC_ingresar
+    usecase "Estimar ganancia y riesgo" as UC_estimar
+    usecase "Guardar simulación en perfil" as UC_guardar
+}
+
+user --> UC_ingresar
+user --> UC_guardar
+
+UC_ingresar ..> UC_estimar : <<include>>
+UC_guardar ..> UC_estimar : <<include>> (requiere cálculo previo)
+@endum

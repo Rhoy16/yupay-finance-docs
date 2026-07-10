@@ -1,0 +1,27 @@
+@startuml "Casos de Uso - Consultar Glosario Financiero"
+
+' Estilo profesional y limpio
+skinparam actorStyle awesome
+skinparam packageStyle rectangle
+skinparam usecase {
+    BackgroundColor #F3F9FF
+    BorderColor #2B88D9
+    ArrowColor #2B88D9
+    ActorBorderColor #2B88D9
+    ActorBackgroundColor #F3F9FF
+}
+
+actor "Usuario" as user
+
+package "Yupay Finance" {
+    usecase "Consultar glosario financiero" as UC_glosario
+    usecase "Buscar término específico" as UC_buscar
+    usecase "Sugerir nuevo término" as UC_sugerir
+}
+
+user --> UC_glosario
+
+UC_glosario ..> UC_buscar : <<include>>
+UC_sugerir ..> UC_glosario : <<extend>>
+
+@enduml

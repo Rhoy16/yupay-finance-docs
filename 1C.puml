@@ -1,0 +1,33 @@
+@startuml 1C
+actor Usuario
+boundary UI_Comparador
+control ComparadorService
+database BD_Financiera
+
+Usuario -> UI_Comparador: ingresarParametros(monto, plazo, moneda)
+activate UI_Comparador
+UI_Comparador -> ComparadorService: buscarTasas(monto, plazo, moneda)
+activate ComparadorService
+
+ComparadorService -> BD_Financiera: consultarEntidades(moneda, plazo)
+activate BD_Financiera
+BD_Financiera --> ComparadorService: List<EntidadFinanciera>
+deactivate BD_Financiera
+
+ComparadorService -> ComparadorService: ordenarPorTasa(entidades)
+UI_Comparador <-- ComparadorService: List<ResultadoBusqueda> ordenados
+deactivate ComparadorService
+
+Usuario <-- UI_Comparador: mostrarlistadoOrdenadoPorTasa
+
+alt Usuario aplica filtro por criterios
+    Usuario -> UI_Comparador: aplicarFiltro(tipoEntidad, nivelRiesgo)
+    UI_Comparador -> ComparadorService: filtrarEntidades(filtro)
+    activate ComparadorService
+    ComparadorService -> ComparadorService: aplicar(filtro, entidades)
+    UI_Comparador <-- ComparadorService: List<ResultadoBusqueda> filtrados
+    deactivate ComparadorService
+    Usuario <-- UI_Comparador: mostrarListadoFiltrado
+end
+deactivate UI_Comparador
+@endum

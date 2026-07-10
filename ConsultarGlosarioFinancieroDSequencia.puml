@@ -1,0 +1,51 @@
+@startuml "Secuencia - Consultar Glosario Financiero"
+
+autonumber
+skinparam BoxPadding 10
+skinparam ParticipantPadding 10
+
+' Estilo profesional y limpio
+skinparam actorStyle awesome
+skinparam sequence {
+    LifeLineBorderColor #2B88D9
+    LifeLineBackgroundColor #F3F9FF
+    ParticipantBorderColor #2B88D9
+    ParticipantBackgroundColor #F3F9FF
+    BoxBorderColor #2B88D9
+    BoxBackgroundColor #F8F9FA
+}
+
+actor Usuario as usr
+boundary UI_Glosario as ui
+control GlosarioController as ctrl
+participant GlosarioService as srv
+database BD_Glosario as db
+entity TerminoFinanciero as term
+
+== Búsqueda de término financiero ==
+
+usr -> ui : Ingresa palabra en barra de búsqueda (ej. "TREA")
+activate ui
+
+ui -> ctrl : buscarTermino(palabra)
+activate ctrl
+
+ctrl -> srv : buscarTermino(palabra)
+activate srv
+
+srv -> db : SELECT * FROM terminos\nWHERE palabra LIKE '%palabra%'
+activate db
+db --> srv : registros encontrados (definición, ejemplo)
+deactivate db
+
+srv -> term ** : <<create>> TerminoFinanciero(datos)
+srv --> ctrl : List<TerminoFinanciero>
+deactivate srv
+
+ctrl --> ui : listaTerminos
+deactivate ctrl
+
+ui --> usr : Renderiza tarjeta con:\n• Palabra\n• Explicación sencilla\n• Ejemplo práctico
+deactivate ui
+
+@enduml

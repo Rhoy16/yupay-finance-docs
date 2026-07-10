@@ -1,0 +1,46 @@
+@startuml "Diagrama de Clases - Semáforo de Riesgo"
+
+' Estilo profesional y limpio
+skinparam class {
+    BackgroundColor #F3F9FF
+    BorderColor #2B88D9
+    ArrowColor #2B88D9
+}
+skinparam enum {
+    BackgroundColor #FFF3CD
+    BorderColor #FFC107
+}
+
+class Usuario {
+    - id: String
+    - nombre: String
+}
+
+class BuscadorController {
+    + buscarAlternativas(monto: double, plazo: int): List<EntidadFinanciera>
+}
+
+class RiesgoService {
+    + obtenerSemaforo(entidadId: String): TipoSemaforo
+    + calcularSemaforoDesdeSBS(calificacionSBS: String): TipoSemaforo
+}
+
+class EntidadFinanciera {
+    - id: String
+    - nombre: String
+    - tasaOfrecida: float
+    - calificacionSBS: String
+}
+
+enum TipoSemaforo {
+    VERDE
+    AMARILLO
+    ROJO
+}
+
+Usuario --> BuscadorController : interactúa
+BuscadorController ..> RiesgoService : consulta
+RiesgoService ..> EntidadFinanciera : obtiene datos de
+RiesgoService ..> TipoSemaforo : calcula
+
+@enduml

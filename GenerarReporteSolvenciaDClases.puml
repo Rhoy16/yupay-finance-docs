@@ -1,0 +1,43 @@
+@startuml "Diagrama de Clases - Reporte de Solvencia"
+
+' Estilo profesional y limpio
+skinparam class {
+    BackgroundColor #F3F9FF
+    BorderColor #2B88D9
+    ArrowColor #2B88D9
+}
+
+class Usuario {
+    - id: String
+    - nombre: String
+}
+
+class ReporteController {
+    + solicitarReporte(entidadId: Int): ReporteSolvencia
+    + solicitarDescargaPDF(entidadId: Int): File
+}
+
+class SolvenciaService {
+    + crearReporte(entidadId: Int): ReporteSolvencia
+    + exportarPDF(reporte: ReporteSolvencia): File
+}
+
+class EntidadFinanciera {
+    - id: Int
+    - nombre: String
+    - ratioCapitalGlobal: Float
+    - patrimonio: Float
+}
+
+class ReporteSolvencia {
+    - fechaGeneracion: Date
+    - resumenRiesgo: String
+    - formato: String
+}
+
+Usuario --> ReporteController : solicita
+ReporteController ..> SolvenciaService : delega
+SolvenciaService ..> EntidadFinanciera : consulta datos de
+SolvenciaService ..> ReporteSolvencia : genera
+
+@enduml

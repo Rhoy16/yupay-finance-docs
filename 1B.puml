@@ -1,0 +1,51 @@
+@startuml
+class Usuario {
+    - id: int
+    - nombre: String
+    - email: String
+    + ingresarParametros(monto: double, plazo: int, moneda: TipoMoneda): void
+    + aplicarFiltro(filtro: Filtro): void
+    + verListado(): List<ResultadoBusqueda>
+}
+
+class Filtro {
+    - tipoEntidad: TipoEntidad
+    - nivelRiesgo: String
+    + aplicar(lista: List<EntidadFinanciera>): List<EntidadFinanciera>
+}
+
+class ParametroBusqueda {
+    - monto: double
+    - plazo: int
+    - moneda: TipoMoneda
+    + validar(): boolean
+}
+
+class ResultadoBusqueda {
+    - entidad: EntidadFinanciera
+    - tasa: double
+    - tipo: TipoEntidad
+    + getDetalle(): String
+}
+
+class EntidadFinanciera {
+    - id: int
+    - nombre: String
+    - tipo: TipoEntidad
+    - tasa: double
+    + getTasa(): double
+}
+
+enum TipoEntidad {
+    BANCO
+    CAJA
+    COOPERATIVA
+}
+
+Usuario "1" --> "0..1" Filtro : filter
+Usuario "1" --> "1" ParametroBusqueda : search
+ParametroBusqueda "1" --> "1..*" ResultadoBusqueda : generates
+ResultadoBusqueda "1" --> "1" EntidadFinanciera : references
+Filtro --> TipoEntidad
+EntidadFinanciera --> TipoEntidad
+@endum
