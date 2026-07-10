@@ -1,0 +1,54 @@
+@startuml "Business Case: Yupay Finance"
+
+' Actores externos al negocio 
+actor/ "Usuario" <<Business Actor>> as User
+actor/ "Pasarela de Pagos" <<Business Actor>> as Pasarela
+
+' Trabajadores internos del negocio
+actor/ "Economista" <<Business Worker>> as Economista
+actor/ "Analista de Datos" <<Business Worker>> as Analista
+actor/ "Motor Yupay (Sistema)" <<Business Worker>> as Motor
+
+' Procesos Core del Negocio
+rectangle "Yupay Finance Business" {
+  usecase/ "Gestionar Acceso \ny Cuentas" as BUC1
+  usecase/ "Gestionar Suscripciones \ny Facturación" as BUC2
+  usecase/ "Evaluar Opciones \ny Análisis de Riesgo" as BUC3
+  usecase/ "Simular Búsqueda \ny Rentabilidad" as BUC4
+  usecase/ "Monitorear Mercado \ny Emitir Alertas" as BUC5
+  usecase/ "Recolectar y Actualizar \nDatos Financieros" as BUC6
+}
+
+' Relaciones de los actores externos con los procesos
+User --> BUC1
+User --> BUC2
+User --> BUC3
+User --> BUC4
+
+' Relacion de sistemas externos
+BUC2 -> Pasarela : <<publish>>
+
+' Relaciones de los trabajadores internos con los procesos (sin etiquetas inventadas)
+Economista --> BUC3
+Motor --> BUC5
+Analista --> BUC6
+
+' Conexión interna de procesos usando terminología UML clásica
+BUC4 --> BUC6 : <<include>>
+BUC5 --> BUC6 : <<include>>
+
+' Estética 
+skinparam usecase {
+  BackgroundColor #C7F4FF
+  BorderColor #7A1631
+  StereotypeFontColor #2E7D32
+}
+skinparam actor {
+  BackgroundColor #C7F4FF
+  BorderColor #7A1631
+  StereotypeFontColor #2E7D32
+}
+skinparam Arrow {
+  Color #7A1631
+}
+@enduml
