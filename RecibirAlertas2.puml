@@ -7,72 +7,72 @@ skinparam class {
   ArrowColor #333333
 }
 
-enum TipoAlerta {
-  CAMBIO_TASA
-  CAMBIO_RIESGO
+enum AlertType {
+  RATE_CHANGE
+  RISK_CHANGE
 }
 
-enum EstadoAlerta {
-  PENDIENTE
-  ENVIADA
-  LEIDA
+enum AlertState {
+  PENDING
+  SENT
+  READ
 }
 
-enum TipoSuscripcion {
-  BASICO
+enum SubscriptionType {
+  BASIC
   PRO
 }
 
-class Usuario {
+class User {
   - id : int
-  - nombre : String
+  - name : String
   - email : String
-  - suscripcion : TipoSuscripcion
-  + configurarAlerta(entidad: EntidadFinanciera, umbral: double) : void
-  + verAlertas() : List~Alerta~
+  - subscription : SubscriptionType
+  + configureAlert(institution: FinancialInstitution, threshold: double) : void
+  + getAlerts() : List~Alert~
 }
 
-class ConfiguracionAlerta {
+class AlertConfiguration {
   - id : int
-  - umbralTasa : double
-  - activa : boolean
-  + activar() : void
-  + desactivar() : void
-  + validar() : boolean
+  - rateThreshold : double
+  - isActive : boolean
+  + activate() : void
+  + deactivate() : void
+  + validate() : boolean
 }
 
-class Alerta {
+class Alert {
   - id : int
-  - tipo : TipoAlerta
-  - mensaje : String
-  - fechaGenerada : date
-  - estado : EstadoAlerta
-  - valorAnterior : double
-  - valorNuevo : double
-  + generarMensaje() : String
-  + marcarLeida() : void
+  - type : AlertType
+  - message : String
+  - generatedDate : Date
+  - state : AlertState
+  - previousValue : double
+  - newValue : double
+  + generateMessage() : String
+  + markAsRead() : void
 }
 
-class EntidadFinanciera {
+class FinancialInstitution {
   - id : int
-  - nombre : String
-  - tipo : String
-  - tasaActual : double
-  - nivelRiesgo : String
-  + getTasa() : double
-  + getNivelRiesgo() : String
+  - name : String
+  - type : String
+  - currentRate : double
+  - riskLevel : String
+  + getInterestRate() : double
+  + getRiskLevel() : String
 }
 
-class MonitorCambios {
-  + detectarCambios(entidades: List~EntidadFinanciera~) : List~Alerta~
-  + compararValores(anterior: double, nuevo: double) : boolean
-  + notificarUsuarios(alerta: Alerta) : void
+class ChangeMonitor {
+  + detectChanges(institutions: List~FinancialInstitution~) : List~Alert~
+  + compareValues(previous: double, current: double) : boolean
+  + notifyUsers(alert: Alert) : void
 }
 
-Usuario "1" --> "0..*" ConfiguracionAlerta : configura
-ConfiguracionAlerta "1" --> "1" EntidadFinanciera : monitorea
-MonitorCambios "1" --> "0..*" EntidadFinanciera : consulta
-MonitorCambios "1" --> "0..*" Alerta : genera
-Alerta "0..*" --> "1" Usuario : notifica
+User "1" --> "0..*" AlertConfiguration : configures
+AlertConfiguration "1" --> "1" FinancialInstitution : monitors
+ChangeMonitor "1" --> "0..*" FinancialInstitution : queries
+ChangeMonitor "1" --> "0..*" Alert : generates
+Alert "0..*" --> "1" User : notifies
 
 @enduml

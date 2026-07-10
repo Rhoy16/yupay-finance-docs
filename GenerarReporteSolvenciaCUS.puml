@@ -11,12 +11,12 @@ skinparam usecase {
     ActorBackgroundColor #F3F9FF
 }
 
-actor "Usuario" as user
+actor "User" as user
 
 package "Yupay Finance" {
-    usecase "Generar reporte de solvencia" as UC_reporte
-    usecase "Consultar historial financiero en BD" as UC_historial
-    usecase "Descargar reporte en PDF" as UC_pdf
+    usecase "Generate solvency report" as UC_reporte
+    usecase "Query financial history in Database" as UC_historial
+    usecase "Download report as PDF" as UC_pdf
 }
 
 user --> UC_reporte

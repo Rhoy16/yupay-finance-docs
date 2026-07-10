@@ -15,33 +15,33 @@ skinparam sequence {
     BoxBackgroundColor #F8F9FA
 }
 
-actor Usuario as usr
-boundary UI_Comparador as ui
-control RiesgoService as srv
-database BD_Financiera as db
+actor User as usr
+boundary UI_Comparator as ui
+control RiskService as srv
+database FinancialDatabase as db
 
-usr -> ui : Ve la lista de entidades financieras
+usr -> ui : Views the list of financial institutions
 activate ui
 
-loop Por cada entidad renderizada
-    ui -> srv : obtenerSemaforo(entidadId)
+loop For each rendered institution
+    ui -> srv : getTrafficLightStatus(institutionId)
     activate srv
     
-    srv -> db : consultarCalificacionSBS(entidadId)
+    srv -> db : querySbsRating(institutionId)
     activate db
-    db --> srv : calificacionSBS (ej. "A", "C", "E")
+    db --> srv : sbsRating (e.g. "A", "C", "E")
     deactivate db
     
-    srv -> srv : calcularSemaforoDesdeSBS(calificacionSBS)
-    note right: Lógica interna:\n- A/B -> VERDE\n- C -> AMARILLO\n- D/E -> ROJO
+    srv -> srv : calculateTrafficLightStatusFromSbs(sbsRating)
+    note right: Internal Logic:\n- A/B -> GREEN\n- C -> YELLOW\n- D/E -> RED
     
-    srv --> ui : TipoSemaforo (VERDE | AMARILLO | ROJO)
+    srv --> ui : TrafficLightStatus (GREEN | YELLOW | RED)
     deactivate srv
     
-    ui -> ui : mostrarIconoSemaforo(color)
+    ui -> ui : showTrafficLightIcon(color)
 end
 
-ui --> usr : Visualiza semáforos junto a cada entidad
+ui --> usr : Visualizes traffic lights next to each institution
 deactivate ui
 
 @enduml

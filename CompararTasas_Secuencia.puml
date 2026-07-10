@@ -1,39 +1,39 @@
 @startuml "Secuencia - Comparar Tasas de Entidades Financieras"
 autonumber
 
-actor Usuario
-boundary UI_Comparador
-control ComparadorService
-database BD_Financiera
+actor User as usr
+boundary UI_Comparator as ui
+control RateComparatorService as srv
+database FinancialDatabase as db
 
-Usuario -> UI_Comparador : ingresarParametros(monto, plazo, moneda)
-activate UI_Comparador
+usr -> ui : inputParameters(amount, term, currency)
+activate ui
 
-UI_Comparador -> ComparadorService : buscarTasas(monto, plazo, moneda)
-activate ComparadorService
+ui -> srv : searchRates(amount, term, currency)
+activate srv
 
-ComparadorService -> BD_Financiera : consultarEntidades(moneda, plazo)
-activate BD_Financiera
-BD_Financiera --> ComparadorService : List<EntidadFinanciera>
-deactivate BD_Financiera
+srv -> db : queryFinancialInstitutions(currency, term)
+activate db
+db --> srv : List<FinancialInstitution>
+deactivate db
 
-ComparadorService -> ComparadorService : ordenarPorTasa(entidades)
-ComparadorService --> UI_Comparador : List<ResultadoBusqueda> ordenados
-deactivate ComparadorService
+srv -> srv : sortByRate(institutions)
+srv --> ui : List<SearchResult> sortedResults
+deactivate srv
 
-UI_Comparador --> Usuario : mostrar listado ordenado por tasa
-deactivate UI_Comparador
+ui --> usr : display list sorted by rate
+deactivate ui
 
-alt Usuario aplica filtro
-    Usuario -> UI_Comparador : aplicarFiltro(tipoEntidad)
-    activate UI_Comparador
-    UI_Comparador -> ComparadorService : filtrarEntidades(filtro)
-    activate ComparadorService
-    ComparadorService -> ComparadorService : aplicar(filtro, entidades)
-    ComparadorService --> UI_Comparador : List<ResultadoBusqueda> filtrados
-    deactivate ComparadorService
-    UI_Comparador --> Usuario : mostrar listado filtrado
-    deactivate UI_Comparador
+alt User applies filter
+    usr -> ui : applyFilter(institutionType)
+    activate ui
+    ui -> srv : filterInstitutions(filter)
+    activate srv
+    srv -> srv : apply(filter, institutions)
+    srv --> ui : List<SearchResult> filteredResults
+    deactivate srv
+    ui --> usr : display filtered list
+    deactivate ui
 end
 
 @enduml

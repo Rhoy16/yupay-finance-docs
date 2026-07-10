@@ -1,51 +1,58 @@
 @startuml
-class Usuario {
+
+class User {
     - id: int
-    - nombre: String
+    - name: String
     - email: String
-    + ingresarParametros(monto: double, plazo: int, moneda: TipoMoneda): void
-    + aplicarFiltro(filtro: Filtro): void
-    + verListado(): List<ResultadoBusqueda>
+    + inputParameters(amount: double, term: int, currency: CurrencyType): void
+    + applyFilter(filter: Filter): void
+    + getResultsList(): List<SearchResult>
 }
 
-class Filtro {
-    - tipoEntidad: TipoEntidad
-    - nivelRiesgo: String
-    + aplicar(lista: List<EntidadFinanciera>): List<EntidadFinanciera>
+class Filter {
+    - institutionType: InstitutionType
+    - riskLevel: String
+    + apply(list: List<FinancialInstitution>): List<FinancialInstitution>
 }
 
-class ParametroBusqueda {
-    - monto: double
-    - plazo: int
-    - moneda: TipoMoneda
-    + validar(): boolean
+class SearchParameter {
+    - amount: double
+    - term: int
+    - currency: CurrencyType
+    + validate(): boolean
 }
 
-class ResultadoBusqueda {
-    - entidad: EntidadFinanciera
-    - tasa: double
-    - tipo: TipoEntidad
-    + getDetalle(): String
+class SearchResult {
+    - institution: FinancialInstitution
+    - interestRate: double
+    - type: InstitutionType
+    + getDetail(): String
 }
 
-class EntidadFinanciera {
+class FinancialInstitution {
     - id: int
-    - nombre: String
-    - tipo: TipoEntidad
-    - tasa: double
-    + getTasa(): double
+    - name: String
+    - type: InstitutionType
+    - interestRate: double
+    + getInterestRate(): double
 }
 
-enum TipoEntidad {
-    BANCO
-    CAJA
-    COOPERATIVA
+enum InstitutionType {
+    BANK
+    SAVINGS_BANK
+    COOPERATIVE
 }
 
-Usuario "1" --> "0..1" Filtro : filter
-Usuario "1" --> "1" ParametroBusqueda : search
-ParametroBusqueda "1" --> "1..*" ResultadoBusqueda : generates
-ResultadoBusqueda "1" --> "1" EntidadFinanciera : references
-Filtro --> TipoEntidad
-EntidadFinanciera --> TipoEntidad
-@endum
+enum CurrencyType {
+    PEN
+    USD
+}
+
+User "1" --> "0..1" Filter : filter
+User "1" --> "1" SearchParameter : search
+SearchParameter "1" --> "1..*" SearchResult : generates
+SearchResult "1" --> "1" FinancialInstitution : references
+Filter --> InstitutionType
+FinancialInstitution --> InstitutionType
+
+@enduml

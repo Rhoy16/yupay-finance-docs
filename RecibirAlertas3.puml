@@ -7,47 +7,47 @@ skinparam sequenceLifeLineBorderColor #333333
 skinparam sequenceArrowColor #333333
 skinparam noteBorderColor #333333
 
-actor "Usuario" as Usuario
-participant "UI_Alertas" as UI
-participant "AlertaService" as Service
-participant "MonitorCambios" as Monitor
-database "BD_Financiera" as BD
+actor "User" as User
+participant "UI_Alerts" as UI
+participant "AlertService" as Service
+participant "ChangeMonitor" as Monitor
+database "FinancialDatabase" as BD
 
-== Configuración inicial de alerta ==
+== Initial Alert Configuration ==
 
-Usuario -> UI : configurarAlerta(entidad, umbral)
-UI -> Service : registrarConfiguracion(usuarioId, entidadId, umbral)
-Service -> BD : guardarConfiguracion(config)
-BD --> Service : confirmacion
-Service --> UI : alertaConfigurada
-UI --> Usuario : mostrar mensaje "Alerta activada"
+User -> UI : configureAlert(institution, threshold)
+UI -> Service : registerConfiguration(userId, institutionId, threshold)
+Service -> BD : saveConfiguration(config)
+BD --> Service : confirmation
+Service --> UI : alertConfigured
+UI --> User : show message "Alert activated"
 
-== Detección automática de cambio ==
+== Automatic Change Detection ==
 
-Monitor -> BD : consultarEntidades()
-BD --> Monitor : List<EntidadFinanciera>
-Monitor -> Monitor : compararValores(anterior, nuevo)
+Monitor -> BD : queryFinancialInstitutions()
+BD --> Monitor : List<FinancialInstitution>
+Monitor -> Monitor : compareValues(previous, current)
 
-alt [Se detecta cambio en tasa o riesgo]
-  Monitor -> BD : registrarAlerta(tipo, valorAnterior, valorNuevo)
-  BD --> Monitor : alertaId
-  Monitor -> Service : notificarUsuariosAfectados(alertaId)
-  Service -> BD : obtenerUsuariosConConfiguracion(entidadId)
-  BD --> Service : List<Usuario>
-  Service --> UI : enviarNotificacion(usuario, alerta)
-  UI --> Usuario : mostrar alerta en pantalla
-else [Sin cambios relevantes]
-  Monitor -> Monitor : continuar monitoreo
+alt [Change detected in rate or risk]
+  Monitor -> BD : registerAlert(type, previousValue, newValue)
+  BD --> Monitor : alertId
+  Monitor -> Service : notifyAffectedUsers(alertId)
+  Service -> BD : getUsersWithConfiguration(institutionId)
+  BD --> Service : List<User>
+  Service --> UI : sendNotification(user, alert)
+  UI --> User : show alert on screen
+else [No relevant changes]
+  Monitor -> Monitor : continue monitoring
 end
 
-== Visualización de alerta ==
+== Alert Visualization ==
 
-Usuario -> UI : verDetalleAlerta(alertaId)
-UI -> Service : obtenerDetalle(alertaId)
-Service -> BD : buscarAlerta(alertaId)
-BD --> Service : Alerta
-Service -> Service : alerta.marcarLeida()
-Service --> UI : detalleAlerta
-UI --> Usuario : mostrar valorAnterior, valorNuevo y entidad
+User -> UI : viewAlertDetail(alertId)
+UI -> Service : getAlertDetail(alertId)
+Service -> BD : findAlert(alertId)
+BD --> Service : Alert
+Service -> Service : alert.markAsRead()
+Service --> UI : alertDetail
+UI --> User : show previousValue, newValue and institution
 
 @enduml

@@ -15,14 +15,14 @@ skinparam Arrow {
 }
 skinparam linetype ortho
 
-actor "Usuario" as Usuario
-actor "BD Financiera" as BD
+actor "User" as Usuario
+actor "Financial Database" as BD
 
 rectangle "Yupay Finance" {
-    usecase "Ingresar monto,\nplazo y moneda" as UC1
-    usecase "Consultar entidades\nfinancieras" as UC2
-    usecase "Ver listado\nordenado por tasa" as UC3
-    usecase "Filtrar resultados" as UC4
+    usecase "Input amount,\nterm and currency" as UC1
+    usecase "Query financial\ninstitutions" as UC2
+    usecase "View list\nsorted by rate" as UC3
+    usecase "Filter results" as UC4
 }
 
 Usuario --> UC1

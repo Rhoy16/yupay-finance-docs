@@ -15,58 +15,58 @@ skinparam sequence {
     BoxBackgroundColor #F8F9FA
 }
 
-actor Usuario as usr
-boundary UI_DetalleEntidad as ui
-control ReporteController as ctrl
-participant SolvenciaService as srv
-database BD_Financiera as db
-entity ReporteSolvencia as rpt
+actor User as usr
+boundary UI_InstitutionDetail as ui
+control ReportController as ctrl
+participant SolvencyService as srv
+database FinancialDatabase as db
+entity SolvencyReport as rpt
 
-== Flujo principal: Generar reporte ==
+== Main Flow: Generate Report ==
 
-usr -> ui : Clic en "Ver reporte de solvencia"
+usr -> ui : Click on "View solvency report"
 activate ui
 
-ui -> ctrl : solicitarReporte(entidadId)
+ui -> ctrl : requestReport(institutionId)
 activate ctrl
 
-ctrl -> srv : crearReporte(entidadId)
+ctrl -> srv : createReport(institutionId)
 activate srv
 
-srv -> db : consultarHistorialSolvencia(entidadId)
+srv -> db : querySolvencyHistory(institutionId)
 activate db
-db --> srv : datosCrudos (ratios, patrimonio histórico)
+db --> srv : rawData (ratios, historical equity)
 deactivate db
 
-srv -> srv : procesarInformacion(datosCrudos)
-srv -> rpt ** : <<create>> ReporteSolvencia
-srv --> ctrl : reporte: ReporteSolvencia
+srv -> srv : processInformation(rawData)
+srv -> rpt ** : <<create>> SolvencyReport
+srv --> ctrl : report: SolvencyReport
 deactivate srv
 
-ctrl --> ui : datosFormateados
+ctrl --> ui : formattedData
 deactivate ctrl
 
-ui --> usr : Renderiza reporte en pantalla
+ui --> usr : Renders report on screen
 deactivate ui
 
-== Flujo opcional: Descargar PDF ==
+== Optional Flow: Download PDF ==
 
-opt El usuario solicita descargar el reporte
-    usr -> ui : Clic en "Descargar PDF"
+opt User requests to download the report
+    usr -> ui : Click on "Download PDF"
     activate ui
 
-    ui -> ctrl : solicitarDescargaPDF(entidadId)
+    ui -> ctrl : requestPdfDownload(institutionId)
     activate ctrl
 
-    ctrl -> srv : exportarPDF(reporte)
+    ctrl -> srv : exportPdf(report)
     activate srv
-    srv --> ctrl : archivoPDF: File
+    srv --> ctrl : pdfFile: File
     deactivate srv
 
-    ctrl --> ui : archivoPDF
+    ctrl --> ui : pdfFile
     deactivate ctrl
 
-    ui --> usr : Descarga del archivo PDF
+    ui --> usr : Downloads PDF file
     deactivate ui
 end
 

@@ -11,12 +11,12 @@ skinparam usecase {
     ActorBackgroundColor #F3F9FF
 }
 
-actor "Usuario" as user
+actor "User" as user
 
 package "Yupay Finance - US04" {
-    usecase "Buscar alternativas de inversión" as UC_buscar
-    usecase "Visualizar semáforo de riesgo" as UC_semaforo
-    usecase "Consultar calificación SBS en BD" as UC_bd
+    usecase "Search investment alternatives" as UC_buscar
+    usecase "Visualize risk traffic light" as UC_semaforo
+    usecase "Query SBS rating in Database" as UC_bd
 }
 
 user --> UC_buscar

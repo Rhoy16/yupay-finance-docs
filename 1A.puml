@@ -1,12 +1,12 @@
 @startuml
 left to right direction
-actor "Usuario" as user
-actor "BD Financiera" as bd
+actor "User" as user
+actor "Financial Database" as bd
 
 rectangle "Yupay Finance" {
-    usecase "Consultar entidades financieras" as UC_consultar
-    usecase "Ver listado ordenado por tasa" as UC_listar
-    usecase "Filtrar resultados por criterios" as UC_filtrar
+    usecase "Query financial institutions" as UC_consultar
+    usecase "View list sorted by rate" as UC_listar
+    usecase "Filter results by criteria" as UC_filtrar
 }
 
 user --> UC_consultar
@@ -15,4 +15,4 @@ user --> UC_filtrar
 UC_consultar ..> UC_listar : <<include>>
 UC_filtrar ..> UC_listar : <<extend>>
 bd --> UC_consultar
-@endum
+@enduml

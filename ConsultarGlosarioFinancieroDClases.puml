@@ -7,31 +7,31 @@ skinparam class {
     ArrowColor #2B88D9
 }
 
-class Usuario {
-    - id: Int
-    - nombre: String
+class User {
+    - id: int
+    - name: String
 }
 
-class GlosarioController {
-    + buscarTermino(palabra: String): List<TerminoFinanciero>
-    + listarPopulares(): List<TerminoFinanciero>
+class GlossaryController {
+    + searchTerm(word: String): List<FinancialTerm>
+    + listPopularTerms(): List<FinancialTerm>
 }
 
-class GlosarioService {
-    + buscarTermino(palabra: String): List<TerminoFinanciero>
-    + obtenerTerminosPopulares(): List<TerminoFinanciero>
+class GlossaryService {
+    + searchTerm(word: String): List<FinancialTerm>
+    + getPopularTerms(): List<FinancialTerm>
 }
 
-class TerminoFinanciero {
-    - id: Int
-    - palabra: String
-    - definicionTecnica: String
-    - definicionSencilla: String
-    - ejemploPractico: String
+class FinancialTerm {
+    - id: int
+    - termName: String
+    - technicalDefinition: String
+    - simpleDefinition: String
+    - practicalExample: String
 }
 
-Usuario --> GlosarioController : consulta
-GlosarioController ..> GlosarioService : delega
-GlosarioService ..> TerminoFinanciero : busca y retorna
+User --> GlossaryController : consults
+GlossaryController ..> GlossaryService : delegates
+GlossaryService ..> FinancialTerm : searches and returns
 
 @enduml

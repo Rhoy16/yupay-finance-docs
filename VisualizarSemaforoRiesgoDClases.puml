@@ -11,36 +11,36 @@ skinparam enum {
     BorderColor #FFC107
 }
 
-class Usuario {
+class User {
     - id: String
-    - nombre: String
+    - name: String
 }
 
-class BuscadorController {
-    + buscarAlternativas(monto: double, plazo: int): List<EntidadFinanciera>
+class SearchController {
+    + searchAlternatives(amount: double, term: int): List<FinancialInstitution>
 }
 
-class RiesgoService {
-    + obtenerSemaforo(entidadId: String): TipoSemaforo
-    + calcularSemaforoDesdeSBS(calificacionSBS: String): TipoSemaforo
+class RiskService {
+    + getTrafficLightStatus(institutionId: String): TrafficLightStatus
+    + calculateTrafficLightStatusFromSbs(sbsRating: String): TrafficLightStatus
 }
 
-class EntidadFinanciera {
+class FinancialInstitution {
     - id: String
-    - nombre: String
-    - tasaOfrecida: float
-    - calificacionSBS: String
+    - name: String
+    - offeredRate: float
+    - sbsRating: String
 }
 
-enum TipoSemaforo {
-    VERDE
-    AMARILLO
-    ROJO
+enum TrafficLightStatus {
+    GREEN
+    YELLOW
+    RED
 }
 
-Usuario --> BuscadorController : interactúa
-BuscadorController ..> RiesgoService : consulta
-RiesgoService ..> EntidadFinanciera : obtiene datos de
-RiesgoService ..> TipoSemaforo : calcula
+User --> SearchController : interacts
+SearchController ..> RiskService : consults
+RiskService ..> FinancialInstitution : gets data from
+RiskService ..> TrafficLightStatus : calculates
 
 @enduml

@@ -1,70 +1,70 @@
 @startuml "Clases - Comparar Tasas de Entidades Financieras"
 
-class Usuario {
+class User {
     - id: int
-    - nombre: String
+    - name: String
     - email: String
-    - suscripcion: TipoSuscripcion
+    - subscription: SubscriptionType
     --
-    + ingresarParametros(monto: double, plazo: int, moneda: TipoMoneda): void
-    + aplicarFiltro(filtro: Filtro): void
-    + verListado(): List~ResultadoBusqueda~
+    + inputParameters(amount: double, term: int, currency: CurrencyType): void
+    + applyFilter(filter: Filter): void
+    + getResultsList(): List~SearchResult~
 }
 
-class ParametroBusqueda {
-    - monto: double
-    - plazo: int
-    - moneda: TipoMoneda
+class SearchParameter {
+    - amount: double
+    - term: int
+    - currency: CurrencyType
     --
-    + validar(): boolean
+    + validate(): boolean
 }
 
-class EntidadFinanciera {
+class FinancialInstitution {
     - id: int
-    - nombre: String
-    - tipo: TipoEntidad
-    - tasa: double
+    - name: String
+    - type: InstitutionType
+    - interestRate: double
     --
-    + getTasa(): double
+    + getInterestRate(): double
 }
 
-class ResultadoBusqueda {
-    - entidad: EntidadFinanciera
-    - tasa: double
-    - tipo: TipoEntidad
+class SearchResult {
+    - institution: FinancialInstitution
+    - interestRate: double
+    - type: InstitutionType
     --
-    + getDetalle(): String
+    + getDetail(): String
 }
 
-class Filtro {
-    - tipoEntidad: TipoEntidad
+class Filter {
+    - institutionType: InstitutionType
     --
-    + aplicar(lista: List~EntidadFinanciera~): List~EntidadFinanciera~
+    + apply(list: List~FinancialInstitution~): List~FinancialInstitution~
 }
 
-enum TipoMoneda {
-    SOLES
-    DOLARES
+enum CurrencyType {
+    PEN
+    USD
 }
 
-enum TipoEntidad {
-    BANCO
-    CAJA
-    COOPERATIVA
+enum InstitutionType {
+    BANK
+    SAVINGS_BANK
+    COOPERATIVE
 }
 
-enum TipoSuscripcion {
-    BASICO
+enum SubscriptionType {
+    BASIC
     PRO
 }
 
-Usuario "1" -down-> "1" ParametroBusqueda : search
-Usuario "1" -right-> "0..1" Filtro : filter
-Usuario -right-> TipoSuscripcion
-ParametroBusqueda "1" -down-> "1..*" ResultadoBusqueda : generates
-ResultadoBusqueda "1" -right-> "1" EntidadFinanciera : references
-ParametroBusqueda -right-> TipoMoneda
-Filtro -down-> TipoEntidad
-EntidadFinanciera -down-> TipoEntidad
+User "1" -down-> "1" SearchParameter : search
+User "1" -right-> "0..1" Filter : filter
+User -right-> SubscriptionType
+SearchParameter "1" -down-> "1..*" SearchResult : generates
+SearchResult "1" -right-> "1" FinancialInstitution : references
+SearchParameter -right-> CurrencyType
+Filter -down-> InstitutionType
+FinancialInstitution -down-> InstitutionType
 
 @enduml

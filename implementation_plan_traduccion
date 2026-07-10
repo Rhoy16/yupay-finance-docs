@@ -1,0 +1,167 @@
+# Implementation Plan - Refactoring UML Diagrams to English and Standard Coding Conventions
+
+We will translate all Spanish class names, attributes, methods, and types in the Yupay Finance UML diagrams to English, utilizing professional fintech and banking terminology. We will also apply standard PascalCase for classes/enums and camelCase for attributes/methods, ensuring consistent data types (e.g., `String`, `int`, `double`, `boolean`, `Date`).
+
+## Proposed Translations Mapping
+
+### Core Enums & Entity Mappings
+| Spanish | English (PascalCase / UPPERCASE) | Notes |
+| :--- | :--- | :--- |
+| `Usuario` | `User` | Standard |
+| `EntidadFinanciera` | `FinancialInstitution` | Fintech standard |
+| `TipoEntidad` | `InstitutionType` | Enums: `BANK` (for `BANCO`), `SAVINGS_BANK` (for `CAJA`), `COOPERATIVE` (for `COOPERATIVA`) |
+| `TipoMoneda` | `CurrencyType` | Enums: `PEN` (for `SOLES`), `USD` (for `DOLARES`) |
+| `TipoSuscripcion` | `SubscriptionType` | Enums: `BASIC` (for `BASICO`), `PRO` (for `PRO`) |
+
+### 1. Rate Comparison / Class Search (`1B.puml`, `Comparartasas_Clases.puml`, `1C.puml`, `CompararTasas_Secuencia.puml`)
+| Spanish Element | English Translation |
+| :--- | :--- |
+| `ParametroBusqueda` | `SearchParameter` |
+| `ResultadoBusqueda` | `SearchResult` |
+| `Filtro` | `Filter` |
+| `ingresarParametros(monto, plazo, moneda)` | `inputParameters(amount: double, term: int, currency: CurrencyType)` |
+| `aplicarFiltro(filtro)` | `applyFilter(filter: Filter)` |
+| `verListado()` | `getResultsList()` |
+| `nivelRiesgo` | `riskLevel` |
+| `aplicar(lista)` | `apply(list: List<FinancialInstitution>)` |
+| `tasa` | `interestRate` |
+| `getDetalle()` | `getDetail()` |
+| `getTasa()` | `getInterestRate()` |
+
+### 2. Investment Simulator (`2B.puml`, `2C.puml`)
+| Spanish Element | English Translation |
+| :--- | :--- |
+| `AppYupayFinance` | `YupayFinanceApp` |
+| `Simulacion` | `Simulation` |
+| `idUsuario` / `idApp` / `idSimulacion` | `userId` / `appId` / `simulationId` |
+| `monto` / `moneda` | `amount` / `currency` |
+| `fechaPlazo` | `dueDate` (Date type) |
+| `gananciaCalculada` | `calculatedYield` |
+| `calcularRendimiento()` | `calculateYield()` |
+| `calcularInteres()` | `calculateInterest()` |
+| `nombreEntidad` | `institutionName` |
+| `nivelRiesgo` | `riskLevel` |
+| `obtenerDatosFinancieros()` | `getFinancialData()` |
+| `guardarSimulacionFavorita(sim)` | `saveFavoriteSimulation(sim: Simulation)` |
+| `mostrarSimulador()` | `displaySimulator()` |
+| `presionarGuardar()` | `pressSave()` |
+| `guardarEnHistorialUsuario(idUsuario, nuevaSim)` | `saveToUserHistory(userId: int, newSimulation: Simulation)` |
+
+### 3. Risk Indicator / Traffic Light (`VisualizarSemaforoRiesgoDClases.puml`, `VisualizarSemaforoRiesgoDSequencia.puml`)
+| Spanish Element | English Translation |
+| :--- | :--- |
+| `BuscadorController` | `SearchController` |
+| `RiesgoService` | `RiskService` |
+| `TipoSemaforo` | `TrafficLightStatus` (Enums: `GREEN`, `YELLOW`, `RED`) |
+| `buscarAlternativas(monto, plazo)` | `searchAlternatives(amount: double, term: int)` |
+| `obtenerSemaforo(entidadId)` | `getTrafficLightStatus(institutionId: String)` |
+| `calcularSemaforoDesdeSBS(calificacionSBS)` | `calculateTrafficLightStatusFromSbs(sbsRating: String)` |
+| `calificacionSBS` | `sbsRating` |
+| `tasaOfrecida` | `offeredRate` |
+
+### 4. Solvency Report (`GenerarReporteSolvenciaDClases.puml`, `GenerarReporteSolvenciaDSequencia.puml`)
+| Spanish Element | English Translation |
+| :--- | :--- |
+| `ReporteController` | `ReportController` |
+| `SolvenciaService` | `SolvencyService` |
+| `ReporteSolvencia` | `SolvencyReport` |
+| `solicitarReporte(entidadId)` | `requestReport(institutionId: int)` |
+| `solicitarDescargaPDF(entidadId)` | `requestPdfDownload(institutionId: int)` |
+| `crearReporte(entidadId)` | `createReport(institutionId: int)` |
+| `exportarPDF(reporte)` | `exportPdf(report: SolvencyReport)` |
+| `ratioCapitalGlobal` | `globalCapitalRatio` |
+| `patrimonio` | `equity` |
+| `fechaGeneracion` | `generationDate` (Date type) |
+| `resumenRiesgo` | `riskSummary` |
+| `formato` | `format` |
+
+### 5. Financial Glossary (`ConsultarGlosarioFinancieroDClases.puml`, `ConsultarGlosarioFinancieroDSequencia.puml`)
+| Spanish Element | English Translation |
+| :--- | :--- |
+| `GlosarioController` | `GlossaryController` |
+| `GlosarioService` | `GlossaryService` |
+| `TerminoFinanciero` | `FinancialTerm` |
+| `buscarTermino(palabra)` | `searchTerm(word: String)` |
+| `listarPopulares()` | `listPopularTerms()` |
+| `obtenerTerminosPopulares()` | `getPopularTerms()` |
+| `palabra` | `termName` |
+| `definicionTecnica` | `technicalDefinition` |
+| `definicionSencilla` | `simpleDefinition` |
+| `ejemploPractico` | `practicalExample` |
+
+### 6. Alert System (`RecibirAlertas2.puml`, `RecibirAlertas3.puml`)
+| Spanish Element | English Translation |
+| :--- | :--- |
+| `ConfiguracionAlerta` | `AlertConfiguration` |
+| `Alerta` | `Alert` |
+| `MonitorCambios` | `ChangeMonitor` |
+| `TipoAlerta` | `AlertType` (Enums: `RATE_CHANGE`, `RISK_CHANGE`) |
+| `EstadoAlerta` | `AlertState` (Enums: `PENDING`, `SENT`, `READ`) |
+| `configurarAlerta(entidad, umbral)` | `configureAlert(institution: FinancialInstitution, threshold: double)` |
+| `verAlertas()` | `getAlerts()` |
+| `umbralTasa` | `rateThreshold` |
+| `activa` | `isActive` |
+| `activar()` / `desactivar()` / `validar()` | `activate()` / `deactivate()` / `validate()` |
+| `fechaGenerada` | `generatedDate` (Date type) |
+| `valorAnterior` / `valorNuevo` | `previousValue` / `newValue` |
+| `generarMensaje()` / `marcarLeida()` | `generateMessage()` / `markAsRead()` |
+| `detectarCambios(entidades)` | `detectChanges(institutions: List<FinancialInstitution>)` |
+| `compararValores(anterior, nuevo)` | `compareValues(previous: double, current: double)` |
+| `notificarUsuarios(alerta)` | `notifyUsers(alert: Alert)` |
+
+## Proposed Changes
+
+### [UML Diagrams]
+
+We will modify the following class diagrams, sequence diagrams, and use case diagrams for absolute architectural cohesion:
+
+#### [MODIFY] [1B.puml](file:///c:/Users/rhoyt/Downloads/modelos%20uml/1B.puml)
+- Translate classes and attributes. Make types consistent.
+
+#### [MODIFY] [1C.puml](file:///c:/Users/rhoyt/Downloads/modelos%20uml/1C.puml)
+- Align sequence steps and function signatures.
+
+#### [MODIFY] [2B.puml](file:///c:/Users/rhoyt/Downloads/modelos%20uml/2B.puml)
+- Translate simulator classes and properties.
+
+#### [MODIFY] [2C.puml](file:///c:/Users/rhoyt/Downloads/modelos%20uml/2C.puml)
+- Align sequence steps.
+
+#### [MODIFY] [Comparartasas_Clases.puml](file:///c:/Users/rhoyt/Downloads/modelos%20uml/Comparartasas_Clases.puml)
+- Translate classes and attributes.
+
+#### [MODIFY] [CompararTasas_Secuencia.puml](file:///c:/Users/rhoyt/Downloads/modelos%20uml/CompararTasas_Secuencia.puml)
+- Align sequence steps.
+
+#### [MODIFY] [ConsultarGlosarioFinancieroDClases.puml](file:///c:/Users/rhoyt/Downloads/modelos%20uml/ConsultarGlosarioFinancieroDClases.puml)
+- Translate glossary classes and fields.
+
+#### [MODIFY] [ConsultarGlosarioFinancieroDSequencia.puml](file:///c:/Users/rhoyt/Downloads/modelos%20uml/ConsultarGlosarioFinancieroDSequencia.puml)
+- Align sequence steps.
+
+#### [MODIFY] [GenerarReporteSolvenciaDClases.puml](file:///c:/Users/rhoyt/Downloads/modelos%20uml/GenerarReporteSolvenciaDClases.puml)
+- Translate solvency report classes and attributes.
+
+#### [MODIFY] [GenerarReporteSolvenciaDSequencia.puml](file:///c:/Users/rhoyt/Downloads/modelos%20uml/GenerarReporteSolvenciaDSequencia.puml)
+- Align sequence steps.
+
+#### [MODIFY] [RecibirAlertas2.puml](file:///c:/Users/rhoyt/Downloads/modelos%20uml/RecibirAlertas2.puml)
+- Translate alert settings, monitor, and state classes.
+
+#### [MODIFY] [RecibirAlertas3.puml](file:///c:/Users/rhoyt/Downloads/modelos%20uml/RecibirAlertas3.puml)
+- Align sequence steps.
+
+#### [MODIFY] [VisualizarSemaforoRiesgoDClases.puml](file:///c:/Users/rhoyt/Downloads/modelos%20uml/VisualizarSemaforoRiesgoDClases.puml)
+- Translate traffic light classes and attributes.
+
+#### [MODIFY] [VisualizarSemaforoRiesgoDSequencia.puml](file:///c:/Users/rhoyt/Downloads/modelos%20uml/VisualizarSemaforoRiesgoDSequencia.puml)
+- Align sequence steps.
+
+#### [MODIFY] [1A.puml](file:///c:/Users/rhoyt/Downloads/modelos%20uml/1A.puml) / [2A.puml](file:///c:/Users/rhoyt/Downloads/modelos%20uml/2A.puml) / [ConsultarGlosarioFinancieroCUS.puml](file:///c:/Users/rhoyt/Downloads/modelos%20uml/ConsultarGlosarioFinancieroCUS.puml) / [GenerarReporteSolvenciaCUS.puml](file:///c:/Users/rhoyt/Downloads/modelos%20uml/GenerarReporteSolvenciaCUS.puml) / [RecibirAlertas1.puml](file:///c:/Users/rhoyt/Downloads/modelos%20uml/RecibirAlertas1.puml) / [VisualizarSemaforoRiesgoCUS.puml](file:///c:/Users/rhoyt/Downloads/modelos%20uml/VisualizarSemaforoRiesgoCUS.puml) / [comparar_tasas.puml](file:///c:/Users/rhoyt/Downloads/modelos%20uml/comparar_tasas.puml)
+- Translate actor names (e.g. `Usuario` -> `User`, `BD Financiera` -> `FinancialDatabase`) to keep diagrams consistent.
+
+## Verification Plan
+
+### Manual Verification
+- We will visually inspect the updated PlantUML files to ensure syntax correctness.
+- We can run a git diff to verify all changes are correct and adhere strictly to naming conventions (PascalCase for classes, camelCase for attributes/methods).

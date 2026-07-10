@@ -1,33 +1,36 @@
 @startuml 1C
-actor Usuario
-boundary UI_Comparador
-control ComparadorService
-database BD_Financiera
+autonumber
 
-Usuario -> UI_Comparador: ingresarParametros(monto, plazo, moneda)
-activate UI_Comparador
-UI_Comparador -> ComparadorService: buscarTasas(monto, plazo, moneda)
-activate ComparadorService
+actor User as usr
+boundary UI_Comparator as ui
+control RateComparatorService as srv
+database FinancialDatabase as db
 
-ComparadorService -> BD_Financiera: consultarEntidades(moneda, plazo)
-activate BD_Financiera
-BD_Financiera --> ComparadorService: List<EntidadFinanciera>
-deactivate BD_Financiera
+usr -> ui: inputParameters(amount, term, currency)
+activate ui
+ui -> srv: searchRates(amount, term, currency)
+activate srv
 
-ComparadorService -> ComparadorService: ordenarPorTasa(entidades)
-UI_Comparador <-- ComparadorService: List<ResultadoBusqueda> ordenados
-deactivate ComparadorService
+srv -> db: queryFinancialInstitutions(currency, term)
+activate db
+db --> srv: List<FinancialInstitution>
+deactivate db
 
-Usuario <-- UI_Comparador: mostrarlistadoOrdenadoPorTasa
+srv -> srv: sortByRate(institutions)
+ui <-- srv: List<SearchResult> sortedResults
+deactivate srv
 
-alt Usuario aplica filtro por criterios
-    Usuario -> UI_Comparador: aplicarFiltro(tipoEntidad, nivelRiesgo)
-    UI_Comparador -> ComparadorService: filtrarEntidades(filtro)
-    activate ComparadorService
-    ComparadorService -> ComparadorService: aplicar(filtro, entidades)
-    UI_Comparador <-- ComparadorService: List<ResultadoBusqueda> filtrados
-    deactivate ComparadorService
-    Usuario <-- UI_Comparador: mostrarListadoFiltrado
+usr <-- ui: displayListSortedByRate
+
+alt User applies filter criteria
+    usr -> ui: applyFilter(institutionType, riskLevel)
+    ui -> srv: filterInstitutions(filter)
+    activate srv
+    srv -> srv: apply(filter, institutions)
+    ui <-- srv: List<SearchResult> filteredResults
+    deactivate srv
+    usr <-- ui: displayFilteredList
 end
-deactivate UI_Comparador
-@endum
+deactivate ui
+
+@enduml

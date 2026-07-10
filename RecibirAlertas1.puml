@@ -11,26 +11,26 @@ skinparam usecase {
 
 left to right direction
 
-actor "Usuario" as Usuario
-actor "Sistema\nYupay" as SistemaYupay <<system>>
+actor "User" as User
+actor "Yupay\nSystem" as YupaySystem <<system>>
 
 rectangle "Yupay Finance" {
-  usecase "Recibir alertas de\ncambio de tasa o riesgo" as UC_Main
-  usecase "Configurar\npreferencias de alerta" as UC_Config
-  usecase "Ver detalle\nde la alerta" as UC_Detalle
-  usecase "Consultar\ncambios en BD" as UC_Consulta
+  usecase "Receive alerts for\nrate or risk changes" as UC_Main
+  usecase "Configure\nalert preferences" as UC_Config
+  usecase "View alert\ndetails" as UC_Detalle
+  usecase "Query changes\nin Database" as UC_Consulta
 }
 
-Usuario --> UC_Main
-Usuario --> UC_Config
+User --> UC_Main
+User --> UC_Config
 UC_Config .> UC_Main : <<include>>
 UC_Main .> UC_Consulta : <<include>>
 UC_Main <.. UC_Detalle : <<extend>>
-SistemaYupay --> UC_Consulta
+YupaySystem --> UC_Consulta
 
 note right of UC_Main
-  Solo disponible para
-  usuarios con Plan Pro
+  Only available for
+  users with Pro Plan
 end note
 
 @enduml

@@ -7,37 +7,37 @@ skinparam class {
     ArrowColor #2B88D9
 }
 
-class Usuario {
+class User {
     - id: String
-    - nombre: String
+    - name: String
 }
 
-class ReporteController {
-    + solicitarReporte(entidadId: Int): ReporteSolvencia
-    + solicitarDescargaPDF(entidadId: Int): File
+class ReportController {
+    + requestReport(institutionId: int): SolvencyReport
+    + requestPdfDownload(institutionId: int): File
 }
 
-class SolvenciaService {
-    + crearReporte(entidadId: Int): ReporteSolvencia
-    + exportarPDF(reporte: ReporteSolvencia): File
+class SolvencyService {
+    + createReport(institutionId: int): SolvencyReport
+    + exportPdf(report: SolvencyReport): File
 }
 
-class EntidadFinanciera {
-    - id: Int
-    - nombre: String
-    - ratioCapitalGlobal: Float
-    - patrimonio: Float
+class FinancialInstitution {
+    - id: int
+    - name: String
+    - globalCapitalRatio: float
+    - equity: float
 }
 
-class ReporteSolvencia {
-    - fechaGeneracion: Date
-    - resumenRiesgo: String
-    - formato: String
+class SolvencyReport {
+    - generationDate: Date
+    - riskSummary: String
+    - format: String
 }
 
-Usuario --> ReporteController : solicita
-ReporteController ..> SolvenciaService : delega
-SolvenciaService ..> EntidadFinanciera : consulta datos de
-SolvenciaService ..> ReporteSolvencia : genera
+User --> ReportController : requests
+ReportController ..> SolvencyService : delegates
+SolvencyService ..> FinancialInstitution : queries data from
+SolvencyService ..> SolvencyReport : generates
 
 @enduml

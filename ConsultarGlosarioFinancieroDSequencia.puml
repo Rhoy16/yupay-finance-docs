@@ -15,37 +15,37 @@ skinparam sequence {
     BoxBackgroundColor #F8F9FA
 }
 
-actor Usuario as usr
-boundary UI_Glosario as ui
-control GlosarioController as ctrl
-participant GlosarioService as srv
-database BD_Glosario as db
-entity TerminoFinanciero as term
+actor User as usr
+boundary UI_Glossary as ui
+control GlossaryController as ctrl
+participant GlossaryService as srv
+database GlossaryDatabase as db
+entity FinancialTerm as term
 
-== Búsqueda de término financiero ==
+== Financial Term Search ==
 
-usr -> ui : Ingresa palabra en barra de búsqueda (ej. "TREA")
+usr -> ui : Enters word in search bar (e.g. "TREA")
 activate ui
 
-ui -> ctrl : buscarTermino(palabra)
+ui -> ctrl : searchTerm(word)
 activate ctrl
 
-ctrl -> srv : buscarTermino(palabra)
+ctrl -> srv : searchTerm(word)
 activate srv
 
-srv -> db : SELECT * FROM terminos\nWHERE palabra LIKE '%palabra%'
+srv -> db : SELECT * FROM terms\nWHERE termName LIKE '%word%'
 activate db
-db --> srv : registros encontrados (definición, ejemplo)
+db --> srv : found records (definition, example)
 deactivate db
 
-srv -> term ** : <<create>> TerminoFinanciero(datos)
-srv --> ctrl : List<TerminoFinanciero>
+srv -> term ** : <<create>> FinancialTerm(data)
+srv --> ctrl : List<FinancialTerm>
 deactivate srv
 
-ctrl --> ui : listaTerminos
+ctrl --> ui : termsList
 deactivate ctrl
 
-ui --> usr : Renderiza tarjeta con:\n• Palabra\n• Explicación sencilla\n• Ejemplo práctico
+ui --> usr : Renders card with:\n• Term Name\n• Simple definition\n• Practical example
 deactivate ui
 
 @enduml

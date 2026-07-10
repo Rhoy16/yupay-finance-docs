@@ -1,36 +1,39 @@
 @startuml
-actor Usuario
-boundary AppYupayFinance
-control SimuladorController
-entity "nuevaSim:Simulacion" as SimulacionObj
-database BD
+autonumber
 
-Usuario -> AppYupayFinance: ingresarDatos(monto, moneda, plazo)
-activate AppYupayFinance
-AppYupayFinance -> SimuladorController: calcularRendimiento(monto, moneda, plazo)
-activate SimuladorController
+actor User as usr
+boundary YupayFinanceApp as app
+control SimulatorController as ctrl
+entity "newSimulation:Simulation" as SimulationObj
+database Database as db
 
-create SimulacionObj
-SimuladorController -> SimulacionObj: new(monto, moneda, plazo)
-SimuladorController -> SimulacionObj: calcularInteres()
-activate SimulacionObj
-SimulacionObj --> SimuladorController: gananciaCalculada
-deactivate SimulacionObj
+usr -> app: inputData(amount, currency, term)
+activate app
+app -> ctrl: calculateYield(amount, currency, term)
+activate ctrl
 
-SimuladorController --> AppYupayFinance: retornarResultados
-deactivate SimuladorController
-AppYupayFinance --> Usuario: mostrarRendimiento y Riesgo
+create SimulationObj
+ctrl -> SimulationObj: new(amount, currency, term)
+ctrl -> SimulationObj: calculateInterest()
+activate SimulationObj
+SimulationObj --> ctrl: calculatedYield
+deactivate SimulationObj
 
-== Acción de Guardar en Perfil ==
-Usuario -> AppYupayFinance: presionar "Guardar Simulación"
-AppYupayFinance -> SimuladorController: guardarEnHistorialUsuario(idUsuario, nuevaSim)
-activate SimuladorController
-SimuladorController -> BD: INSERT INTO simulaciones_guardadas(...)
-activate BD
-BD --> SimuladorController: confirmacionExito
-deactivate BD
-SimuladorController --> AppYupayFinance: exitoGuardado
-deactivate SimuladorController
-AppYupayFinance --> Usuario: mostrar mensaje "Simulación guardada en tu perfil"
-deactivate AppYupayFinance
-@endum
+ctrl --> app: returnResults
+deactivate ctrl
+app --> usr: displayYieldAndRisk
+
+== Save to Profile Action ==
+usr -> app: click "Save Simulation"
+app -> ctrl: saveToUserHistory(userId, newSimulation)
+activate ctrl
+ctrl -> db: INSERT INTO saved_simulations(...)
+activate db
+db --> ctrl: successConfirmation
+deactivate db
+ctrl --> app: saveSuccess
+deactivate ctrl
+app --> usr: show message "Simulation saved to your profile"
+deactivate app
+
+@enduml
