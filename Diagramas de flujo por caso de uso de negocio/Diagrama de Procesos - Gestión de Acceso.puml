@@ -1,0 +1,33 @@
+@startuml "Diagrama de Procesos - Gestión de Acceso"
+skinparam SwimlaneTitleBackgroundColor #EEE
+skinparam ActivityBackgroundColor #FFF9C4
+skinparam ActivityBorderColor #7A1631
+skinparam Arrow {
+  Color #7A1631
+}
+
+|Visitante|
+start
+:Ingresa datos para nueva cuenta\n(usuario, correo y contraseña);
+
+|Sistema Yupay|
+:Verifica unicidad del correo\nen la base de datos;
+
+if (¿El correo ya está registrado?) then (Sí)
+  :Rechaza el registro;
+  :Muestra mensaje de "Correo en uso";
+  |Visitante|
+  :Se redirige a Iniciar Sesión\no Recuperar Contraseña;
+  stop
+else (No)
+  |Sistema Yupay|
+  :Crea la cuenta de usuario;
+  :Asigna el "Plan Básico (temporal solo en primer sprint)"\npor defecto;
+  |Visitante|
+  :Inicia sesión con sus\nnuevas credenciales;
+  |Sistema Yupay|
+  :Valida credenciales;
+  :Otorga acceso al panel principal;
+  stop
+endif
+@enduml
