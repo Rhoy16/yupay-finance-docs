@@ -1,0 +1,33 @@
+@startuml "ERD - Contexto de Monitoreo y Alertas"
+skinparam linetype ortho
+
+entity market_events {
+    *id: INT <<PK>>
+    --
+    *financial_entity_id: INT <<FK>>
+    *event_type: VARCHAR(50)
+    *description: VARCHAR(255)
+    *detected_at: DATETIME
+    *created_at: DATETIME
+    *created_by: INT
+    updated_at: DATETIME
+    updated_by: INT
+}
+
+entity notifications {
+    *id: INT <<PK>>
+    --
+    *user_id: INT <<FK>>
+    *market_event_id: INT <<FK>>
+    *status: VARCHAR(20)
+    *is_emailed: BOOLEAN
+    *created_at: DATETIME
+    *created_by: INT
+    updated_at: DATETIME
+    updated_by: INT
+}
+
+' Relación de Uno a Muchos (Un evento de mercado puede disparar múltiples notificaciones para distintos usuarios)
+market_events ||--o{ notifications
+
+@enduml

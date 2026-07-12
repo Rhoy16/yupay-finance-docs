@@ -1,0 +1,35 @@
+@startuml "ERD - Contexto de Suscripciones y Facturación"
+skinparam linetype ortho
+
+entity subscriptions {
+    *id: INT <<PK>>
+    --
+    *user_id: INT <<FK>>
+    *plan_type: VARCHAR(20)
+    *status: VARCHAR(50)
+    *period_start_date: DATETIME
+    *period_end_date: DATETIME
+    last_payment_id: INT <<FK>>
+    *created_at: DATETIME
+    *created_by: INT
+    updated_at: DATETIME
+    updated_by: INT
+}
+
+entity billing_orders {
+    *id: INT <<PK>>
+    --
+    *user_id: INT <<FK>>
+    *amount: DECIMAL(10,2)
+    *currency: CHAR(3)
+    *status: VARCHAR(20)
+    *created_at: DATETIME
+    *created_by: INT
+    updated_at: DATETIME
+    updated_by: INT
+}
+
+' Relación opcional de Cero o Uno a Muchos (Una orden de facturación puede ser el último pago de una suscripción)
+billing_orders |o--o{ subscriptions
+
+@enduml

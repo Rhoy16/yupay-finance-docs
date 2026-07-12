@@ -1,0 +1,48 @@
+@startuml "ERD - Catálogo y Riesgo Financiero"
+skinparam linetype ortho
+
+entity financial_entities {
+    *id: INT <<PK>>
+    --
+    *commercial_name: VARCHAR(100)
+    *entity_type: VARCHAR(50)
+    *fsd_is_active: BOOLEAN
+    fsd_coverage_amount: DECIMAL(10,2)
+    fsd_coverage_currency: CHAR(3)
+    *created_at: DATETIME
+    *created_by: INT
+    updated_at: DATETIME
+    updated_by: INT
+}
+
+entity financial_products {
+    *id: INT <<PK>>
+    --
+    *entity_id: INT <<FK>>
+    *product_name: VARCHAR(100)
+    *instrument_type: VARCHAR(50)
+    *tea: DECIMAL(5,2)
+    *trea: DECIMAL(5,2)
+    *created_at: DATETIME
+    *created_by: INT
+    updated_at: DATETIME
+    updated_by: INT
+}
+
+entity risk_reports {
+    *id: INT <<PK>>
+    --
+    *entity_id: INT <<FK>>
+    *evaluation_date: DATETIME
+    *traffic_light_color: VARCHAR(20)
+    pdf_url: VARCHAR(255)
+    *created_at: DATETIME
+    *created_by: INT
+    updated_at: DATETIME
+    updated_by: INT
+}
+
+financial_entities ||--o{ financial_products
+financial_entities ||--o{ risk_reports
+
+@enduml

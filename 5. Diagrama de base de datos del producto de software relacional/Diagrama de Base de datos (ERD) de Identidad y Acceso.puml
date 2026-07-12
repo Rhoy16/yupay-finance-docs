@@ -1,0 +1,31 @@
+@startuml "ERD - Contexto de Identidad y Acceso"
+skinparam linetype ortho
+
+entity users {
+    *id: INT <<PK>>
+    --
+    *email: VARCHAR(150)
+    *password_hash: VARCHAR(255)
+    *status: VARCHAR(20)
+    *created_at: DATETIME
+    *created_by: INT
+    updated_at: DATETIME
+    updated_by: INT
+}
+
+entity sessions {
+    *id: INT <<PK>>
+    --
+    *user_id: INT <<FK>>
+    *token_jwt: VARCHAR(512)
+    *expires_at: DATETIME
+    *created_at: DATETIME
+    *created_by: INT
+    updated_at: DATETIME
+    updated_by: INT
+}
+
+' Relación de Uno a Muchos (Un usuario puede tener múltiples sesiones activas)
+users ||--o{ sessions
+
+@enduml

@@ -8,13 +8,15 @@ package CatalogRiskBC {
             - String commercialName
             - EntityType type
             - FSDCoverage fsdCoverage
-            + updateRiskReport(report: RiskReport)
-            + addOrUpdateProduct(product: FinancialProduct)
+            ' Métodos de comportamiento (El AR orquesta todo)
+            + evaluateRisk(color: TrafficLightColor, evaluationDate: DateTime, pdfUrl: String)
+            + registerNewProduct(productName: String, type: InstrumentType, rate: InterestRate)
+            + updateProductRate(productId: ProductId, newRate: InterestRate)
             + getAvailableProducts(): List<FinancialProduct>
         }
         
         class EntityId <<ValueObject>> {
-            - UUID value
+            - Long value
         }
         
         enum EntityType <<ValueObject>> {
@@ -33,11 +35,12 @@ package CatalogRiskBC {
             - ProductId id
             - String productName
             - InstrumentType instrumentType
-            + updateRates(newRate: InterestRate)
+            ' Solo accesible a través del AR
+            ~ updateRates(newRate: InterestRate)
         }
         
         class ProductId <<ValueObject>> {
-            - UUID value
+            - Long value
         }
         
         class InterestRate <<ValueObject>> {
@@ -50,11 +53,12 @@ package CatalogRiskBC {
             - ReportId id
             - DateTime evaluationDate
             - String economistPdfUrl
-            + updateTrafficLight(color: TrafficLightColor)
+            ' Solo accesible a través del AR
+            ~ updateTrafficLight(color: TrafficLightColor)
         }
         
         class ReportId <<ValueObject>> {
-            - UUID value
+            - Long value
         }
         
         enum TrafficLightColor <<ValueObject>> {
@@ -76,25 +80,25 @@ package SharedBC {
     }
 }
 
-' Relaciones estructurales del Agregado FinancialEntity[cite: 7]
+' Relaciones estructurales del Agregado FinancialEntity
 FinancialEntity "1" *--> "1" EntityId
 FinancialEntity "1" *--> "1" EntityType
 FinancialEntity "1" *--> "1" FSDCoverage
 
-' Relaciones de contención hacia otras entidades internas[cite: 7]
+' Relaciones de contención hacia otras entidades internas
 FinancialEntity "1" *--> "0..1" RiskReport
 FinancialEntity "1" *--> "0..*" FinancialProduct
 
-' Composición del FinancialProduct[cite: 7]
+' Composición del FinancialProduct
 FinancialProduct "1" *--> "1" ProductId
 FinancialProduct "1" *--> "1" InterestRate
 FinancialProduct "1" *--> "1" InstrumentType
 
-' Composición del RiskReport[cite: 7]
+' Composición del RiskReport
 RiskReport "1" *--> "1" ReportId
 RiskReport "1" *--> "1" TrafficLightColor
 
-' Relación con el Shared Kernel[cite: 7]
+' Relación con el Shared Kernel
 FSDCoverage "1" *--> "1" Money
 
 @enduml

@@ -1,0 +1,125 @@
+@startuml "Diagrama Físico de Base de Datos - Yupay Finance"
+skinparam linetype ortho
+
+entity users {
+    *id: INT <<PK>>
+    --
+    *email: VARCHAR(100)
+    *password_hash: VARCHAR(255)
+    *first_name: VARCHAR(75)
+    *last_name: VARCHAR(75)
+    *plan_type: VARCHAR(20)
+    *created_at: DATETIME
+    *created_by: INT
+    updated_at: DATETIME
+    updated_by: INT
+}
+
+entity subscriptions {
+    *id: INT <<PK>>
+    --
+    *user_id: INT <<FK>>
+    *plan_type: VARCHAR(20)
+    *status: VARCHAR(20)
+    *start_date: DATETIME
+    *end_date: DATETIME
+    *created_at: DATETIME
+    *created_by: INT
+    updated_at: DATETIME
+    updated_by: INT
+}
+
+entity financial_entities {
+    *id: INT <<PK>>
+    --
+    *commercial_name: VARCHAR(100)
+    *entity_type: VARCHAR(50)
+    *fsd_active: BOOLEAN
+    *created_at: DATETIME
+    *created_by: INT
+    updated_at: DATETIME
+    updated_by: INT
+}
+
+entity financial_products {
+    *id: INT <<PK>>
+    --
+    *entity_id: INT <<FK>>
+    *name: VARCHAR(100)
+    *instrument_type: VARCHAR(50)
+    *created_at: DATETIME
+    *created_by: INT
+    updated_at: DATETIME
+    updated_by: INT
+}
+
+entity interest_rates {
+    *id: INT <<PK>>
+    --
+    *product_id: INT <<FK>>
+    *tea: DECIMAL(5,2)
+    *trea: DECIMAL(5,2)
+    *min_amount: DECIMAL(10,2)
+    *term_days: INT
+    *effective_date: DATETIME
+    *created_at: DATETIME
+    *created_by: INT
+    updated_at: DATETIME
+    updated_by: INT
+}
+
+entity risk_reports {
+    *id: INT <<PK>>
+    --
+    *entity_id: INT <<FK>>
+    *traffic_light_color: VARCHAR(20)
+    pdf_url: VARCHAR(255)
+    *evaluation_date: DATETIME
+    *created_at: DATETIME
+    *created_by: INT
+    updated_at: DATETIME
+    updated_by: INT
+}
+
+entity saved_simulations {
+    *id: INT <<PK>>
+    --
+    *user_id: INT <<FK>>
+    *entity_id: INT <<FK>>
+    *amount: DECIMAL(10,2)
+    *term_days: INT
+    *created_at: DATETIME
+    *created_by: INT
+    updated_at: DATETIME
+    updated_by: INT
+}
+
+entity notifications {
+    *id: INT <<PK>>
+    --
+    *user_id: INT <<FK>>
+    *entity_id: INT <<FK>>
+    *event_type: VARCHAR(50)
+    *is_read: BOOLEAN
+    *is_emailed: BOOLEAN
+    *created_at: DATETIME
+    *created_by: INT
+    updated_at: DATETIME
+    updated_by: INT
+}
+
+' Relaciones de Usuarios
+users ||--o{ subscriptions
+users ||--o{ saved_simulations
+users ||--o{ notifications
+
+' Relaciones del Catálogo Financiero
+financial_entities ||--o{ financial_products
+financial_entities ||--o{ risk_reports
+financial_products ||--o{ interest_rates
+
+' Relaciones Cruzadas (Cruce de datos para Alertas y Simulaciones Guardadas)
+financial_entities ||--o{ saved_simulations
+financial_entities ||--o{ notifications
+
+@enduml

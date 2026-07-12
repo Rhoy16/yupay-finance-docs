@@ -12,7 +12,7 @@ package SimulationBC {
         }
         
         class SimulationId <<ValueObject>> {
-            - UUID value
+            - Long value
         }
         
         class InvestmentParameters <<ValueObject>> {
@@ -56,10 +56,10 @@ package SimulationBC {
 
 package SharedBC {
     class UserId <<ValueObject>> {
-        - UUID value
+        - Long value
     }
     class ProductId <<ValueObject>> {
-        - UUID value
+        - Long value
     }
 }
 

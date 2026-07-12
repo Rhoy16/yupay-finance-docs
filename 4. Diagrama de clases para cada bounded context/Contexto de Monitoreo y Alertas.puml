@@ -13,7 +13,7 @@ package MonitoringAlertsBC {
         }
         
         class EventId <<ValueObject>> {
-            - UUID value
+            - Long value
         }
         
         enum EventType <<ValueObject>> {
@@ -35,7 +35,7 @@ package MonitoringAlertsBC {
         }
         
         class NotificationId <<ValueObject>> {
-            - UUID value
+            - Long value
         }
         
         enum NotificationStatus <<ValueObject>> {
@@ -47,10 +47,10 @@ package MonitoringAlertsBC {
 
 package SharedBC {
     class UserId <<ValueObject>> {
-        - UUID value
+        - Long value
     }
     class EntityId <<ValueObject>> {
-        - UUID value
+        - Long value
     }
 }
 

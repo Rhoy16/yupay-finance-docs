@@ -16,7 +16,7 @@ package BillingSubscriptionsBC {
         }
         
         class SubscriptionId <<ValueObject>> {
-            - UUID value
+            - Long value
         }
         
         enum PlanType <<ValueObject>> {
@@ -49,7 +49,7 @@ package BillingSubscriptionsBC {
         }
         
         class BillingOrderId <<ValueObject>> {
-            - UUID value
+            - Long value
         }
         
         enum PaymentStatus <<ValueObject>> {
@@ -62,7 +62,7 @@ package BillingSubscriptionsBC {
 
 package SharedBC {
     class UserId <<ValueObject>> {
-        - UUID value
+        - Long value
     }
     class Money <<ValueObject>> {
         - BigDecimal amount

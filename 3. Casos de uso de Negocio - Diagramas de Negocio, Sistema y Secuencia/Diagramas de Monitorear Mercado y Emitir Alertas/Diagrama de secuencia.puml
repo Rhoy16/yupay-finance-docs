@@ -1,9 +1,11 @@
-@startuml "Sequence Diagram - Monitor Market and Issue Alerts"
+@startuml "Sequence Diagram - Monitor Market and Issue Alerts (DDD & Robustness)"
 
 actor "Background Worker" as Worker
 control "Alert App Service" as AppService
 database "FinancialData Repository" as FinRepo
 database "User Repository" as UserRepo
+entity "MarketEvent (Entity)" as MarketEvent
+entity "Notification (Entity)" as Notification
 database "Notification Repository" as NotifRepo
 boundary "External Email API" as EmailAPI
 
@@ -12,25 +14,41 @@ activate AppService
 
 AppService -> FinRepo : checkForMarketFluctuations()
 activate FinRepo
-FinRepo --> AppService : marketChangesList
+FinRepo --> AppService : eventDataList
 deactivate FinRepo
 
-' Validación de fluctuaciones (Tasas, Semáforo o SBS)
-alt Changes Detected
-    AppService -> UserRepo : findProUsersWithSavedEntity(entityId)
+' Validación de fluctuaciones delegada al dominio
+alt eventDataList is not empty
+    ' 1. Instanciación de la Entidad del evento de mercado
+    AppService -> MarketEvent ** : load(eventDataList)
+    activate MarketEvent
+    
+    AppService -> UserRepo : findProUsersWithSavedEntity(MarketEvent.entityId)
     activate UserRepo
-    UserRepo --> AppService : affectedProUsersList
+    UserRepo --> AppService : affectedUsersData
     deactivate UserRepo
     
-    ' Cruce de datos: Solo se alerta si hay usuarios PRO que guardaron la simulación
-    alt Affected users found
+    alt affectedUsersData is not empty
+        ' 2. La lógica de crear notificaciones pertenece a la Entidad, no al Servicio
+        AppService -> MarketEvent : generateNotifications(affectedUsersData)
+        
+        ' 3. Instanciación de las notificaciones individuales
+        MarketEvent -> Notification ** : create(userId, eventId)
+        activate Notification
+        Notification --> MarketEvent : newNotification
+        deactivate Notification
+        
+        MarketEvent --> AppService : notificationsList
+        deactivate MarketEvent
+        
+        ' 4. El servicio orquesta la persistencia y la frontera (Boundary)
         par Parallel Notifications
-            AppService -> NotifRepo : saveVisualAlert(usersList, alertData)
+            AppService -> NotifRepo : saveAll(notificationsList)
             activate NotifRepo
-            NotifRepo --> AppService : alertsSaved()
+            NotifRepo --> AppService : saved()
             deactivate NotifRepo
         else
-            AppService -> EmailAPI : sendEmergencyEmails(usersEmails, alertData)
+            AppService -> EmailAPI : dispatchEmergencyEmails(notificationsList)
             activate EmailAPI
             EmailAPI --> AppService : emailsSent()
             deactivate EmailAPI
