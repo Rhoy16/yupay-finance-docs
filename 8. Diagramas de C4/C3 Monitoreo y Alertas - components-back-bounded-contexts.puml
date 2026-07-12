@@ -1,0 +1,23 @@
+@startuml "Components-Layers-Monitoring"
+!includeurl https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+
+title Yupay Finance Platform - Monitoring & Alerts Component Diagram
+
+Container(spa, "Single Page Application", "React / Angular", "Provee la interfaz gráfica para los usuarios")
+ContainerDb(db, "Database", "PostgreSQL / MySQL", "Almacena eventos de mercado y el estado de lectura de las notificaciones")
+System_Ext(sendgrid, "SendGrid API", "Servicio externo para el envío de correos electrónicos")
+
+Container_Boundary(monitoring_bc, "Monitoring & Alerts Bounded Context") {
+    Component(interfaces, "Interfaces Layer", "REST Controllers & Event Listeners", "Recibe consultas de la web (marcar como leído) y eventos automáticos del sistema")
+    Component(application, "Application Layer", "App Services", "Orquesta la creación de notificaciones masivas para los usuarios afectados por un evento")
+    Component(domain, "Domain Layer", "Aggregates & Entities", "Contiene la lógica y estados puros de MarketEvent y Notification")
+    Component(infrastructure, "Infrastructure Layer", "Repositories & Email Adapters", "Implementa el acceso físico a base de datos y el cliente HTTP para el correo")
+}
+
+Rel(spa, interfaces, "Consulta notificaciones y las marca como leídas vía JSON/HTTPS")
+Rel(interfaces, application, "Delega el flujo de trabajo a")
+Rel(application, domain, "Aplica reglas de negocio de alertas en")
+Rel(application, infrastructure, "Solicita lectura/escritura y envío de correos a través de")
+Rel(infrastructure, db, "Persiste las notificaciones y eventos usando [ORM]")
+Rel(infrastructure, sendgrid, "Despacha los correos electrónicos usando [HTTPS/REST]")
+@enduml

@@ -1,0 +1,37 @@
+@startuml "Components-Bounded Contexts"
+!includeurl https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+
+title Yupay Finance Platform - API Component Diagram
+
+Container(spa, "Single Page Application", "React / Angular", "Provee la interfaz gráfica para los usuarios")
+ContainerDb(db, "Database", "PostgreSQL / MySQL", "Almacena la información de todos los módulos")
+
+Container_Boundary(api, "API Application") {
+    Component(identity, "Identity & Access", "Maneja registro, autenticación y sesiones")
+    Component(simulation, "Simulation", "Motor de cálculo de rentabilidad financiera")
+    Component(catalog, "Catalog & Risk", "Gestiona entidades, productos y reportes de riesgo")
+    Component(billing, "Billing", "Maneja suscripciones y pasarela de pagos")
+    Component(monitoring, "Monitoring", "Escanea fluctuaciones y dispara alertas")
+    Component(shared, "Shared Kernel", "Objetos de valor compartidos (Money, Ids, etc.)")
+}
+
+Rel(spa, identity, "Autentica usuarios vía")
+Rel(spa, simulation, "Solicita simulaciones vía")
+Rel(spa, catalog, "Consulta productos vía")
+Rel(spa, billing, "Gestiona suscripciones vía")
+
+Rel(simulation, catalog, "Consulta tasas actuales de")
+Rel(monitoring, catalog, "Lee estados de riesgo de")
+Rel(billing, identity, "Verifica estado de cuenta de")
+
+Rel(identity, shared, "Usa recursos comunes")
+Rel(simulation, shared, "Usa recursos comunes")
+Rel(catalog, shared, "Usa recursos comunes")
+Rel(billing, shared, "Usa recursos comunes")
+
+Rel(identity, db, "Lee/Escribe datos")
+Rel(simulation, db, "Lee/Escribe datos")
+Rel(catalog, db, "Lee/Escribe datos")
+Rel(billing, db, "Lee/Escribe datos")
+Rel(monitoring, db, "Lee/Escribe datos")
+@enduml

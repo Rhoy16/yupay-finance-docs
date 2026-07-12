@@ -1,0 +1,24 @@
+@startuml "Containers"
+!includeurl https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+title Yupay Finance - Container Diagram
+
+Person(user, "Usuario (Básico / Pro)", "Persona que busca simular inversiones, comparar tasas, evaluar riesgos financieros y recibir alertas del mercado")
+System_Ext(sendgrid, "SendGrid", "Servicio externo de envío de correos transaccionales y alertas")
+System_Ext(payment_gateway, "Payment Gateway (Stripe / Niubiz)", "Servicio externo de procesamiento de pagos")
+
+System_Boundary(system, "Yupay Finance Platform") {
+    Container(web, "Web Application", "React / Angular", "Entrega el contenido estático y la Single Page Application (SPA) al navegador del cliente")
+    Container(spa, "Single Page Application", "React / Angular", "Provee la interfaz gráfica para simular inversiones, ver reportes de riesgo y gestionar suscripciones")
+    Container(api, "API Application", "Java Spring Boot", "Provee toda la lógica de negocio (Identidad, Catálogo, Facturación, Alertas) vía API RESTful")
+    ContainerDb(db, "Database", "PostgreSQL / MySQL", "Almacena los usuarios, catálogo financiero, simulaciones, notificaciones y órdenes de pago")
+}
+
+Rel(user, web, "Visita yupay-finance.com usando [HTTPS]")
+Rel(user, spa, "Interactúa con la plataforma web usando su navegador")
+Rel(web, spa, "Se entrega al navegador web del cliente")
+Rel(spa, api, "Realiza llamadas API para consultar y guardar datos usando [HTTPS]")
+Rel(api, db, "Lee desde y escribe hacia usando [TCP/IP / ORM]")
+Rel(api, sendgrid, "Envía correos electrónicos utilizando la API de [HTTPS]")
+Rel(api, payment_gateway, "Procesa las transacciones de los planes Pro usando [HTTPS]")
+@enduml

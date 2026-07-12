@@ -1,0 +1,21 @@
+@startuml "Components-Layers-Catalog"
+!includeurl https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+
+title Yupay Finance Platform - Catalog & Risk Component Diagram
+
+Container(spa, "Single Page Application", "React / Angular", "Provee la interfaz gráfica para los usuarios")
+ContainerDb(db, "Database", "PostgreSQL / MySQL", "Almacena entidades financieras, productos, tasas de interés y reportes de riesgo")
+
+Container_Boundary(catalog_bc, "Catalog & Risk Bounded Context") {
+    Component(interfaces, "Interfaces Layer", "REST Controllers", "Expone endpoints para listar bancos, buscar productos y consultar niveles de riesgo")
+    Component(application, "Application Layer", "App Services", "Orquesta las consultas del catálogo y la lógica de actualización de reportes")
+    Component(domain, "Domain Layer", "Aggregates & Entities", "Define el comportamiento estricto de FinancialEntity, FinancialProduct y RiskReport")
+    Component(infrastructure, "Infrastructure Layer", "Repositories", "Implementa el acceso físico a los datos mediante los repositorios")
+}
+
+Rel(spa, interfaces, "Solicita lista de bancos y tasas vía JSON/HTTPS")
+Rel(interfaces, application, "Delega las peticiones a")
+Rel(application, domain, "Aplica las reglas de negocio de")
+Rel(application, infrastructure, "Solicita guardar/leer datos mediante interfaces de")
+Rel(infrastructure, db, "Lee y persiste entidades en tablas relacionales usando [ORM]")
+@enduml

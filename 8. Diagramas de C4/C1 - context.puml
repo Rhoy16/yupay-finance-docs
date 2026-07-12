@@ -1,0 +1,14 @@
+@startuml "Context"
+!includeurl https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Context.puml
+
+title Yupay Finance - System Context Diagram
+
+Person(user, "Usuario (Básico / Pro)", "Persona que busca simular inversiones, comparar tasas, evaluar riesgos financieros y recibir alertas del mercado")
+System(system, "Yupay Finance Platform", "Permite a los usuarios comparar productos financieros, analizar niveles de riesgo y gestionar suscripciones para funcionalidades avanzadas")
+System_Ext(sendgrid, "SendGrid / Email Service", "Servicio externo para el envío de correos electrónicos transaccionales y de alerta de mercado")
+System_Ext(payment_gateway, "Payment Gateway (Stripe / Niubiz)", "Servicio externo utilizado para procesar los cobros de las suscripciones al plan Pro")
+
+Rel(user, system, "Simula inversiones, visualiza reportes de riesgo y gestiona alertas usando")
+Rel(system, sendgrid, "Delega el envío de notificaciones y alertas de emergencia mediante")
+Rel(system, payment_gateway, "Procesa pagos y validaciones de tarjetas mediante")
+@enduml

@@ -1,0 +1,21 @@
+@startuml "Components-Layers"
+!includeurl https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+
+title Yupay Finance Platform - Simulation Component Diagram
+
+Container(spa, "Single Page Application", "React / Angular", "Provee la interfaz gráfica para los usuarios")
+ContainerDb(db, "Database", "PostgreSQL / MySQL", "Almacena simulaciones guardadas e historial")
+
+Container_Boundary(simulation_bc, "Simulation Bounded Context") {
+    Component(interfaces, "Interfaces Layer", "REST Controllers", "Recibe las peticiones HTTP y valida el input inicial")
+    Component(application, "Application Layer", "App Services", "Orquesta el flujo de la simulación y llama a los repositorios")
+    Component(domain, "Domain Layer", "Entities & Engines", "Contiene el motor matemático de interés compuesto y reglas de negocio puras")
+    Component(infrastructure, "Infrastructure Layer", "Repositories", "Implementa el acceso a datos y conexiones externas")
+}
+
+Rel(spa, interfaces, "Envía monto y plazo vía JSON/HTTPS")
+Rel(interfaces, application, "Delega ejecución a")
+Rel(application, domain, "Ejecuta cálculos y reglas en")
+Rel(application, infrastructure, "Solicita guardar/leer datos mediante interfaces de")
+Rel(infrastructure, db, "Persiste las simulaciones usando [ORM]")
+@enduml

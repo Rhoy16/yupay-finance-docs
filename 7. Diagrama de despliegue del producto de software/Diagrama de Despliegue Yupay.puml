@@ -1,0 +1,75 @@
+@startuml "Diagrama de Despliegue - Yupay Finance (Azure)"
+skinparam linetype ortho
+
+node "Browser / Mobile App" as Browser
+node "Azure Front Door (CDN)" as CDN
+node "Azure API Management" as ApiGateway
+
+node "Identity Azure Container Apps" as IAMContainer {
+  artifact "IdentityMicroserviceJAR" {
+    component "Interface" as IAInterface
+    component "Application Service" as IAApplication
+    component "Domain Model" as IADomain
+    component "Infrastructure" as IAInfrastructure
+  }
+}
+
+node "Simulation Azure Container Apps" as SimulationContainer {
+  artifact "SimulationMicroserviceJAR" {
+    component "Interface" as SimInterface
+    component "Application Service" as SimApplication
+    component "Domain Model" as SimDomain
+    component "Infrastructure" as SimInfrastructure
+  }
+}
+
+node "Catalog & Risk Azure Container Apps" as CatalogContainer {
+  artifact "CatalogMicroserviceJAR" {
+    component "Interface" as CatInterface
+    component "Application Service" as CatApplication
+    component "Domain Model" as CatDomain
+    component "Infrastructure" as CatInfrastructure
+  }
+}
+
+node "Billing Azure Container Apps" as BillingContainer {
+  artifact "BillingMicroserviceJAR" {
+    component "Interface" as BillInterface
+    component "Application Service" as BillApplication
+    component "Domain Model" as BillDomain
+    component "Infrastructure" as BillInfrastructure
+  }
+}
+
+node "Notification Azure Container Apps" as NotificationContainer {
+  artifact "NotificationMicroserviceJAR" {
+    component "Interface" as NotifInterface
+    component "Application Service" as NotifApplication
+    component "Domain Model" as NotifDomain
+    component "Infrastructure" as NotifInfrastructure
+  }
+}
+
+database "Azure Database for PostgreSQL" as RelationalDatabase
+cloud "Payment Gateway\n(Stripe / Niubiz)" as PaymentProvider
+cloud "SendGrid" as SendGrid
+
+Browser --> CDN : HTTPS
+Browser --> ApiGateway : HTTPS
+
+ApiGateway --> IAMContainer : HTTPS
+ApiGateway --> SimulationContainer : HTTPS
+ApiGateway --> CatalogContainer : HTTPS
+ApiGateway --> BillingContainer : HTTPS
+ApiGateway --> NotificationContainer : HTTPS
+
+IAMContainer --> RelationalDatabase : TCP/IP
+SimulationContainer --> RelationalDatabase : TCP/IP
+CatalogContainer --> RelationalDatabase : TCP/IP
+BillingContainer --> RelationalDatabase : TCP/IP
+NotificationContainer --> RelationalDatabase : TCP/IP
+
+BillingContainer --> PaymentProvider : HTTPS
+NotificationContainer --> SendGrid : HTTPS
+
+@enduml

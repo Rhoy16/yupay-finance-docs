@@ -1,0 +1,78 @@
+@startuml "Conceptual Domain Model - Yupay Finance"
+left to right direction
+
+package "Identity & Access" {
+  class User {
+    email
+    status
+  }
+  
+  class Session {
+    token
+  }
+
+  User "1" -- "0..*" Session : owns
+}
+
+package "Catalog & Risk" {
+  class FinancialEntity {
+    commercialName
+    type
+  }
+  
+  class FinancialProduct {
+    productName
+    instrumentType
+  }
+  
+  class RiskReport {
+    trafficLightColor
+  }
+
+  FinancialEntity "1" -- "0..*" FinancialProduct : offers
+  FinancialEntity "1" -- "0..1" RiskReport : evaluated by
+}
+
+package "Simulation" {
+  class SimulationRecord {
+    amount
+    term
+    projectedReturn
+  }
+}
+
+package "Billing & Subscriptions" {
+  class Subscription {
+    planType
+    status
+  }
+  
+  class BillingOrder {
+    amount
+    paymentStatus
+  }
+
+  Subscription "1" -- "0..*" BillingOrder : generates
+}
+
+package "Monitoring & Alerts" {
+  class MarketEvent {
+    eventType
+    description
+  }
+  
+  class Notification {
+    isEmailed
+  }
+
+  MarketEvent "1" -- "1..*" Notification : triggers
+}
+
+' Relaciones estratégicas cruzando los límites de los paquetes (Context Map)
+User "1" -- "0..1" Subscription : subscribes to
+User "1" -- "0..*" SimulationRecord : runs
+User "1" -- "0..*" Notification : receives
+SimulationRecord "*" -- "1" FinancialProduct : based on
+FinancialEntity "1" -- "0..*" MarketEvent : affected by
+
+@enduml
