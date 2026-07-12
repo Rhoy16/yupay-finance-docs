@@ -1,15 +1,17 @@
-@startuml "Business Case: Recolectar y Actualizar Datos Financieros"
+@startuml "Business Case: Monitorear Mercado y Emitir Alertas"
 
 ' Trabajadores internos del negocio
-actor/ "Analista de Datos" <<Business Worker>> as Analista
+actor/ "Motor Yupay (Sistema)" <<Business Worker>> as Motor
 
 ' Límite del Modelo de Negocio
 rectangle "Modelo de Casos de Uso del Negocio - Yupay Finance" {
+  usecase/ "Monitorear Mercado \ny Emitir Alertas" as BUC5
   usecase/ "Recolectar y Actualizar \nDatos Financieros" as BUC6
 }
 
 ' Relaciones
-Analista --> BUC6
+Motor --> BUC5
+BUC5 ..> BUC6 : <<include>>
 
 ' Estética 
 skinparam usecase {
