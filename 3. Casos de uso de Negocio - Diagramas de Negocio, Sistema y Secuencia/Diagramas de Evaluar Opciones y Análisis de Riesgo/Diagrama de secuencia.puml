@@ -1,0 +1,48 @@
+@startuml "Sequence Diagram - Evaluate Options and Risk Analysis"
+
+actor User
+boundary "UI Front Controller" as UI
+control "Risk REST API" as RestApi
+control "Risk App Service" as AppService
+database "User Repository" as UserRepository
+database "RiskReport Repository" as ReportRepository
+
+User -> UI : viewDetailedRiskReport(entityId)
+activate UI
+
+UI -> RestApi : GET /api/risk-reports/{entityId}
+activate RestApi
+
+RestApi -> AppService : getDetailedReport(entityId, userId)
+activate AppService
+
+' Se verifica el nivel de suscripción del usuario
+AppService -> UserRepository : findSubscriptionPlan(userId)
+activate UserRepository
+UserRepository --> AppService : planType
+deactivate UserRepository
+
+alt planType == "Plan Básico"
+    AppService --> RestApi : accessDenied(requiresPro)
+    
+    RestApi --> UI : 403 Forbidden (Upgrade Required)
+    
+    UI --> User : showPaywall("Mejora a Plan Pro para acceder a este informe detallado y descargar el PDF")
+    
+else planType == "Plan Profesional (Pro)"
+    AppService -> ReportRepository : findReportByEntity(entityId)
+    activate ReportRepository
+    ReportRepository --> AppService : RiskReport (Data & PDF Link)
+    deactivate ReportRepository
+    
+    AppService --> RestApi : success(RiskReport)
+    deactivate AppService
+    
+    RestApi --> UI : 200 OK (Report Data)
+    deactivate RestApi
+    
+    UI --> User : renderDetailedReportAndPDFLink()
+    deactivate UI
+end
+
+@enduml

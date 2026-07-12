@@ -1,0 +1,48 @@
+@startuml "Sequence Diagram - Monitor Market and Issue Alerts"
+
+actor "Background Worker" as Worker
+control "Alert App Service" as AppService
+database "FinancialData Repository" as FinRepo
+database "User Repository" as UserRepo
+database "Notification Repository" as NotifRepo
+boundary "External Email API" as EmailAPI
+
+Worker -> AppService : executeMarketScan()
+activate AppService
+
+AppService -> FinRepo : checkForMarketFluctuations()
+activate FinRepo
+FinRepo --> AppService : marketChangesList
+deactivate FinRepo
+
+' Validación de fluctuaciones (Tasas, Semáforo o SBS)
+alt Changes Detected
+    AppService -> UserRepo : findProUsersWithSavedEntity(entityId)
+    activate UserRepo
+    UserRepo --> AppService : affectedProUsersList
+    deactivate UserRepo
+    
+    ' Cruce de datos: Solo se alerta si hay usuarios PRO que guardaron la simulación
+    alt Affected users found
+        par Parallel Notifications
+            AppService -> NotifRepo : saveVisualAlert(usersList, alertData)
+            activate NotifRepo
+            NotifRepo --> AppService : alertsSaved()
+            deactivate NotifRepo
+        else
+            AppService -> EmailAPI : sendEmergencyEmails(usersEmails, alertData)
+            activate EmailAPI
+            EmailAPI --> AppService : emailsSent()
+            deactivate EmailAPI
+        end
+    else No users affected
+        AppService -> AppService : logEvent("No PRO users tracking this entity")
+    end
+else Market Stable
+    AppService -> AppService : logEvent("No fluctuations detected")
+end
+
+AppService --> Worker : scanCompleted()
+deactivate AppService
+
+@enduml

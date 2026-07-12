@@ -1,0 +1,60 @@
+@startuml "Sequence Diagram - Simulate Search and Profitability"
+
+actor User
+boundary "UI Front Controller" as UI
+control "Simulation REST API" as RestApi
+control "Simulation App Service" as AppService
+database "FinancialData Repository" as Repository
+entity "Simulation Engine (Domain)" as Engine
+
+User -> UI : simulateInvestment(amount, term, department, type)
+activate UI
+
+UI -> RestApi : GET /api/simulations?amount=...&term=...
+activate RestApi
+
+RestApi -> AppService : getSimulationResults(amount, term, department, type)
+activate AppService
+
+' Validación de negocio según US07 (Ej. Mínimo S/ 500 para Plazo Fijo)
+alt Validation Failed
+    AppService --> RestApi : validationError()
+    
+    RestApi --> UI : 400 Bad Request
+    
+    UI --> User : showAlert("El monto mínimo requerido para apertura una cuenta es de S/ 500.00")
+    
+else Parameters Valid
+    AppService -> Repository : findAvailableEntities(department, type)
+    activate Repository
+    Repository --> AppService : List<FinancialEntity>
+    deactivate Repository
+    
+    ' Validación de pantalla sin resultados según US13
+    alt No entities found
+        AppService --> RestApi : emptyList()
+        
+        RestApi --> UI : 200 OK (Empty Data)
+        
+        UI --> User : showZeroState("No encontramos opciones para esta configuración. Intenta cambiar a otros parámetros.")
+        
+    else Entities found
+        ' Motor matemático de cálculo según US09 / US10
+        AppService -> Engine : calculateAndSortReturns(entitiesList, amount, term)
+        activate Engine
+        Engine --> AppService : sortedSimulationResults
+        deactivate Engine
+        
+        AppService --> RestApi : success(sortedSimulationResults)
+        deactivate AppService
+        
+        RestApi --> UI : 200 OK (Results Array)
+        deactivate RestApi
+        
+        ' Renderizado exitoso según US11 / US12
+        UI --> User : renderResultsTable(sortedSimulationResults)
+        deactivate UI
+    end
+end
+
+@enduml

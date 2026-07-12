@@ -1,0 +1,57 @@
+@startuml "Sequence Diagram - User Registration"
+
+actor Guest
+boundary "UI Front Controller" as UI
+control "Auth REST API" as RestApi
+control "Auth Application Service" as AppService
+database "User Repository" as UserRepository
+entity "User (Entity)" as User
+
+Guest -> UI : registerUser(name, email, password)
+activate UI
+
+UI -> RestApi : POST /api/users/register
+activate RestApi
+
+RestApi -> AppService : register(name, email, password)
+activate AppService
+
+' Se valida la unicidad del correo según US02
+AppService -> UserRepository : findByEmail(email)
+activate UserRepository
+
+alt Email already registered
+    UserRepository --> AppService : User (existing)
+    
+    AppService --> RestApi : duplicateError()
+    
+    RestApi --> UI : 400 Bad Request
+    
+    UI --> Guest : showAlert("El correo ingresado ya se encuentra en uso")
+    
+else Email available
+    UserRepository --> AppService : null
+    deactivate UserRepository
+
+    ' Se encripta la contraseña y se asigna el plan según US01
+    AppService -> User ** : create(name, email, hashPassword, "Plan Básico")
+    activate User
+    User --> AppService : newUser
+    deactivate User
+
+    AppService -> UserRepository : save(newUser)
+    activate UserRepository
+    UserRepository --> AppService : saved()
+    deactivate UserRepository
+
+    AppService --> RestApi : created(userId)
+    deactivate AppService
+
+    RestApi --> UI : 201 Created (Confirmation)
+    deactivate RestApi
+
+    UI --> Guest : redirectToLogin()
+    deactivate UI
+end
+
+@enduml
