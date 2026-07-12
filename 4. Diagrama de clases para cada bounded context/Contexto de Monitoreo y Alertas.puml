@@ -1,0 +1,70 @@
+@startuml "Class Diagram - Monitoring and Alerts Bounded Context"
+
+package MonitoringAlertsBC {
+    
+    package MarketEventAggregate {
+        class MarketEvent <<AggregateRoot>> {
+            - EventId id
+            - EntityId financialEntityId
+            - EventType type
+            - String description
+            - DateTime detectedAt
+            + generateNotifications(affectedUsers: List<UserId>): List<Notification>
+        }
+        
+        class EventId <<ValueObject>> {
+            - UUID value
+        }
+        
+        enum EventType <<ValueObject>> {
+            RATE_CHANGE
+            RISK_TRAFFIC_LIGHT_CHANGE
+            SBS_INTERVENTION
+        }
+    }
+    
+    package NotificationAggregate {
+        class Notification <<AggregateRoot>> {
+            - NotificationId id
+            - UserId userId
+            - EventId relatedEventId
+            - NotificationStatus status
+            - boolean isEmailed
+            + markAsRead()
+            + confirmEmailDelivery()
+        }
+        
+        class NotificationId <<ValueObject>> {
+            - UUID value
+        }
+        
+        enum NotificationStatus <<ValueObject>> {
+            UNREAD
+            READ
+        }
+    }
+}
+
+package SharedBC {
+    class UserId <<ValueObject>> {
+        - UUID value
+    }
+    class EntityId <<ValueObject>> {
+        - UUID value
+    }
+}
+
+' Relaciones estructurales de MarketEvent
+MarketEvent "1" *--> "1" EventId
+MarketEvent "1" *--> "1" EventType
+
+' Relaciones estructurales de Notification
+Notification "1" *--> "1" NotificationId
+Notification "1" *--> "1" NotificationStatus
+
+' Relaciones con el Shared Kernel y entre Agregados (Por ID)
+MarketEvent "*" --> "1" EntityId : "affectedEntity"
+Notification "*" --> "1" UserId : "targetUser"
+Notification "*" --> "1" EventId : "triggeredBy"
+
+@enduml

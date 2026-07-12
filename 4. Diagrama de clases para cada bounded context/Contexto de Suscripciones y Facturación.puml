@@ -1,0 +1,91 @@
+@startuml "Class Diagram - Contexto de Suscripciones y Facturación"
+
+package BillingSubscriptionsBC {
+    
+    package SubscriptionAggregate {
+        class Subscription <<AggregateRoot>> {
+            - SubscriptionId id
+            - UserId userId
+            - PlanType currentPlan
+            - SubscriptionStatus status
+            - BillingPeriod currentPeriod
+            + upgradeToPro(paymentId: BillingOrderId)
+            + cancel()
+            + degradeToBasicIfExpired(currentDate: DateTime)
+            + renew(newPeriod: BillingPeriod)
+        }
+        
+        class SubscriptionId <<ValueObject>> {
+            - UUID value
+        }
+        
+        enum PlanType <<ValueObject>> {
+            BASIC
+            PRO
+        }
+        
+        enum SubscriptionStatus <<ValueObject>> {
+            ACTIVE
+            CANCELED_PENDING_EXPIRATION
+            EXPIRED
+        }
+        
+        class BillingPeriod <<ValueObject>> {
+            - DateTime startDate
+            - DateTime endDate
+            + isExpired(currentDate: DateTime): boolean
+        }
+    }
+    
+    package BillingAggregate {
+        class BillingOrder <<AggregateRoot>> {
+            - BillingOrderId id
+            - UserId userId
+            - Money amount
+            - PaymentStatus status
+            - DateTime createdAt
+            + markAsSuccessful()
+            + markAsFailed(reason: String)
+        }
+        
+        class BillingOrderId <<ValueObject>> {
+            - UUID value
+        }
+        
+        enum PaymentStatus <<ValueObject>> {
+            PENDING
+            SUCCESS
+            FAILED
+        }
+    }
+}
+
+package SharedBC {
+    class UserId <<ValueObject>> {
+        - UUID value
+    }
+    class Money <<ValueObject>> {
+        - BigDecimal amount
+        - String currency
+    }
+}
+
+' Relaciones estructurales de Subscription
+Subscription "1" *--> "1" SubscriptionId
+Subscription "1" *--> "1" PlanType
+Subscription "1" *--> "1" SubscriptionStatus
+Subscription "1" *--> "1" BillingPeriod
+
+' Relaciones estructurales de BillingOrder
+BillingOrder "1" *--> "1" BillingOrderId
+BillingOrder "1" *--> "1" PaymentStatus
+
+' Relaciones con el Shared Kernel
+Subscription "*" --> "1" UserId
+BillingOrder "*" --> "1" UserId
+BillingOrder "1" *--> "1" Money
+
+' Relacion entre agregados (Por ID, regla estricta de DDD)
+Subscription "*" --> "0..1" BillingOrderId : "lastPaymentId"
+
+@enduml

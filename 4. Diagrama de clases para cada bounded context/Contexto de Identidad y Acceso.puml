@@ -1,0 +1,70 @@
+@startuml "Class Diagram - Contexto de Identidad y Acceso"
+
+package IdentityAccessBC {
+    
+    package UserAggregate {
+        class User <<AggregateRoot>> {
+            - UserId id
+            - Email email
+            - Password password
+            - AccountStatus status
+            + register(email, password)
+            + authenticate(rawPassword): boolean
+            + changePassword(newPassword)
+        }
+        
+        class UserId <<ValueObject>> {
+            - UUID value
+        }
+        
+        class Email <<ValueObject>> {
+            - String address
+            + isValid(): boolean
+        }
+        
+        class Password <<ValueObject>> {
+            - String hash
+            + verify(rawPassword): boolean
+        }
+        
+        enum AccountStatus <<ValueObject>> {
+            ACTIVE
+            LOCKED
+            PENDING
+        }
+    }
+    
+    package SessionAggregate {
+        class Session <<AggregateRoot>> {
+            - SessionId id
+            - UserId userId
+            - Token token
+            - DateTime expiresAt
+            + isValid(): boolean
+            + revoke()
+        }
+        
+        class SessionId <<ValueObject>> {
+            - UUID value
+        }
+        
+        class Token <<ValueObject>> {
+            - String jwtValue
+        }
+    }
+}
+
+' Relaciones estructurales del Agregado User
+User "1" *--> "1" UserId
+User "1" *--> "1" Email
+User "1" *--> "1" Password
+User "1" *--> "1" AccountStatus
+
+' Relaciones estructurales del Agregado Session
+Session "1" *--> "1" SessionId
+Session "1" *--> "1" Token
+
+' Relación entre Bounded Contexts / Agregados (Por ID, regla de oro en DDD)
+Session "*" --> "1" UserId
+
+@enduml

@@ -1,0 +1,85 @@
+@startuml "Class Diagram - Contexto de Búsqueda y Simulación"
+
+package SimulationBC {
+    
+    package SimulationAggregate {
+        class Simulation <<AggregateRoot>> {
+            - SimulationId id
+            - UserId userId
+            - DateTime executedAt
+            + calculateResults(availableProducts: List<ProductInfo>)
+            + getSortedResults(): List<SimulationResult>
+        }
+        
+        class SimulationId <<ValueObject>> {
+            - UUID value
+        }
+        
+        class InvestmentParameters <<ValueObject>> {
+            - InstrumentType type
+            + validateBusinessRules()
+        }
+        
+        class Money <<ValueObject>> {
+            - BigDecimal amount
+            - String currency
+            + isGreaterThanOrEqual(minAmount: Money): boolean
+            + add(other: Money): Money
+        }
+        
+        class TermDays <<ValueObject>> {
+            - Integer value
+            + isValidFixedTerm(): boolean
+        }
+        
+        class Location <<ValueObject>> {
+            - String departmentName
+        }
+        
+        enum InstrumentType <<ValueObject>> {
+            SAVINGS
+            FIXED_TERM
+        }
+        
+        class SimulationResult <<Entity>> {
+            - ResultId id
+            - ProductId productId
+            + calculateProfit(): Money
+        }
+        
+        class InterestRate <<ValueObject>> {
+            - BigDecimal percentage
+            - RateType type 
+        }
+    }
+}
+
+package SharedBC {
+    class UserId <<ValueObject>> {
+        - UUID value
+    }
+    class ProductId <<ValueObject>> {
+        - UUID value
+    }
+}
+
+' Relaciones estructurales del Agregado Simulation
+Simulation "1" *--> "1" SimulationId
+Simulation "1" *--> "1" InvestmentParameters
+Simulation "1" *--> "0..*" SimulationResult
+
+' Relación hacia el exterior (Shared Kernel)
+Simulation "*" --> "1" UserId
+
+' Composición de los parámetros de inversión
+InvestmentParameters "1" *--> "1" Money : "principalAmount"
+InvestmentParameters "1" *--> "1" TermDays
+InvestmentParameters "1" *--> "1" Location
+InvestmentParameters "1" *--> "1" InstrumentType
+
+' Composición del resultado de la simulación
+SimulationResult "1" *--> "1" InterestRate : "appliedRate"
+SimulationResult "1" *--> "1" Money : "projectedReturn"
+SimulationResult "*" --> "1" ProductId
+
+@enduml

@@ -1,0 +1,100 @@
+@startuml "Class Diagram - Catálogo y Riesgo Financiero"
+
+package CatalogRiskBC {
+    
+    package FinancialEntityAggregate {
+        class FinancialEntity <<AggregateRoot>> {
+            - EntityId id
+            - String commercialName
+            - EntityType type
+            - FSDCoverage fsdCoverage
+            + updateRiskReport(report: RiskReport)
+            + addOrUpdateProduct(product: FinancialProduct)
+            + getAvailableProducts(): List<FinancialProduct>
+        }
+        
+        class EntityId <<ValueObject>> {
+            - UUID value
+        }
+        
+        enum EntityType <<ValueObject>> {
+            BANK
+            MUNICIPAL_CAJA
+            RURAL_CAJA
+        }
+        
+        class FSDCoverage <<ValueObject>> {
+            - boolean isActive
+            - Money maxCoverageAmount
+            + validateCoverage(amount: Money): boolean
+        }
+        
+        class FinancialProduct <<Entity>> {
+            - ProductId id
+            - String productName
+            - InstrumentType instrumentType
+            + updateRates(newRate: InterestRate)
+        }
+        
+        class ProductId <<ValueObject>> {
+            - UUID value
+        }
+        
+        class InterestRate <<ValueObject>> {
+            - BigDecimal tea
+            - BigDecimal trea
+            + isGreaterThan(other: InterestRate): boolean
+        }
+        
+        class RiskReport <<Entity>> {
+            - ReportId id
+            - DateTime evaluationDate
+            - String economistPdfUrl
+            + updateTrafficLight(color: TrafficLightColor)
+        }
+        
+        class ReportId <<ValueObject>> {
+            - UUID value
+        }
+        
+        enum TrafficLightColor <<ValueObject>> {
+            GREEN
+            YELLOW
+            RED
+        }
+    }
+}
+
+package SharedBC {
+    class Money <<ValueObject>> {
+        - BigDecimal amount
+        - String currency
+    }
+    enum InstrumentType <<ValueObject>> {
+        SAVINGS
+        FIXED_TERM
+    }
+}
+
+' Relaciones estructurales del Agregado FinancialEntity[cite: 7]
+FinancialEntity "1" *--> "1" EntityId
+FinancialEntity "1" *--> "1" EntityType
+FinancialEntity "1" *--> "1" FSDCoverage
+
+' Relaciones de contención hacia otras entidades internas[cite: 7]
+FinancialEntity "1" *--> "0..1" RiskReport
+FinancialEntity "1" *--> "0..*" FinancialProduct
+
+' Composición del FinancialProduct[cite: 7]
+FinancialProduct "1" *--> "1" ProductId
+FinancialProduct "1" *--> "1" InterestRate
+FinancialProduct "1" *--> "1" InstrumentType
+
+' Composición del RiskReport[cite: 7]
+RiskReport "1" *--> "1" ReportId
+RiskReport "1" *--> "1" TrafficLightColor
+
+' Relación con el Shared Kernel[cite: 7]
+FSDCoverage "1" *--> "1" Money
+
+@enduml
