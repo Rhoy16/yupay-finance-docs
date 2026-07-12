@@ -1,0 +1,41 @@
+@startuml "Diagrama de Procesos - Simular Búsqueda y Rentabilidad"
+skinparam SwimlaneTitleBackgroundColor #EEE
+skinparam ActivityBackgroundColor #FFF9C4
+skinparam ActivityBorderColor #7A1631
+skinparam Arrow {
+  Color #7A1631
+}
+
+|Usuario|
+start
+:Selecciona el tipo de instrumento financiero\n(Ahorros o Plazo Fijo);
+:Ingresa los parámetros de búsqueda\n(Monto, Plazo, Departamento);
+:Solicita la simulación;
+
+|Motor Yupay (Sistema)|
+:Recibe la solicitud;
+:Valida las restricciones del negocio\n(Ej. Monto mínimo S/ 500 para Plazo Fijo);
+
+while (¿Cumple con las restricciones?) is (No)
+  :Muestra advertencia visual de error;
+  |Usuario|
+  :Corrige los parámetros de búsqueda;
+  :Solicita la simulación nuevamente;
+  |Motor Yupay (Sistema)|
+  :Valida las restricciones del negocio;
+endwhile (Sí)
+
+:Consulta la Base de Datos Financiera\ncon los parámetros ingresados;
+:Ejecuta algoritmo de cálculo\nde rentabilidad esperada;
+:Ordena los resultados de mayor\na menor rentabilidad;
+
+if (¿Existen entidades que cumplen?) then (Sí)
+  :Despliega tabla de resultados ordenada\ncon indicadores (TEA, Intereses);
+else (No)
+  :Muestra pantalla amigable\nsin resultados (Zero-state);
+endif
+
+|Usuario|
+:Visualiza y evalúa los resultados;
+stop
+@enduml

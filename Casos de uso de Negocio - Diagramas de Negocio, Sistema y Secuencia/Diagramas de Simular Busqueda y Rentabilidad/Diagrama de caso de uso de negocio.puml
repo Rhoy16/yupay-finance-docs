@@ -1,0 +1,30 @@
+@startuml "Business Case: Simular Búsqueda y Rentabilidad"
+
+' Actores externos al negocio 
+actor/ "Usuario" <<Business Actor>> as User
+
+' Límite del Modelo de Negocio
+rectangle "Modelo de Casos de Uso del Negocio - Yupay Finance" {
+  usecase/ "Simular Búsqueda \ny Rentabilidad" as BUC4
+  usecase/ "Recolectar y Actualizar \nDatos Financieros" as BUC6
+}
+
+' Relaciones
+User --> BUC4
+BUC4 ..> BUC6 : <<include>>
+
+' Estética 
+skinparam usecase {
+  BackgroundColor #C7F4FF
+  BorderColor #7A1631
+  StereotypeFontColor #2E7D32
+}
+skinparam actor {
+  BackgroundColor #C7F4FF
+  BorderColor #7A1631
+  StereotypeFontColor #2E7D32
+}
+skinparam Arrow {
+  Color #7A1631
+}
+@enduml

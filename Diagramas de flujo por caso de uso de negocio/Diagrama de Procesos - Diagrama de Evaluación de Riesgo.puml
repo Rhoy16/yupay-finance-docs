@@ -1,0 +1,43 @@
+@startuml "Diagrama de Procesos - Evaluar Opciones y Análisis de Riesgo"
+skinparam SwimlaneTitleBackgroundColor #EEE
+skinparam ActivityBackgroundColor #FFF9C4
+skinparam ActivityBorderColor #7A1631
+skinparam Arrow {
+  Color #7A1631
+}
+
+|Economista|
+start
+:Realiza evaluación trimestral\nde las entidades financieras;
+:Elabora informe detallado\nde riesgo y solvencia;
+:Sube el informe al sistema\njunto con la calificación (Semáforo);
+
+|Motor Yupay (Sistema)|
+:Valida el formato del informe\ny los documentos adjuntos (PDF);
+:Guarda el informe en la\nBase de Datos;
+:Actualiza el color del Semáforo\nde Riesgo para la entidad;
+
+|Usuario|
+:Consulta la tabla de simulaciones;
+:Visualiza el indicador visual\n(Semáforo de Riesgo);
+:Solicita leer el informe de\nriesgo detallado del Economista;
+
+|Motor Yupay (Sistema)|
+if (¿El usuario tiene suscripción Pro?) then (Sí)
+  :Despliega el informe completo\ndel Economista en pantalla;
+  :Habilita el hipervínculo para\ndescargar el reporte en PDF;
+  
+  |Usuario|
+  :Lee y consume el informe de\nriesgo para su toma de decisiones;
+  
+else (No)
+  |Motor Yupay (Sistema)|
+  :Bloquea el acceso a la vista\ndel informe detallado;
+  :Muestra invitación\npara mejorar al Plan Pro;
+  
+  |Usuario|
+  :Visualiza las opciones de\nmejora de suscripción;
+endif
+
+stop
+@enduml

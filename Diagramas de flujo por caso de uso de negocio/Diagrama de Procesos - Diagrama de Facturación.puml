@@ -1,0 +1,53 @@
+@startuml "Diagrama de Procesos - Gestionar Suscripciones y Facturación"
+skinparam SwimlaneTitleBackgroundColor #EEE
+skinparam ActivityBackgroundColor #FFF9C4
+skinparam ActivityBorderColor #7A1631
+skinparam Arrow {
+  Color #7A1631
+}
+
+|Usuario|
+start
+:Elige entre el Plan Pro o Básico;
+
+repeat
+  |Usuario|
+  :Ingresa sus datos de facturación\ny método de pago;
+  :Solicita el pago de la suscripción;
+
+  |Motor Yupay (Sistema)|
+  :Genera la orden de pago;
+  :Envía los datos de la transacción\nencriptados a la pasarela externa;
+
+  |Pasarela de Pagos|
+  :Recibe la solicitud de cobro;
+  :Procesa la transacción con\nla entidad bancaria del usuario;
+
+  if (¿El pago es aprobado?) then (Sí)
+    :Emite respuesta de transacción exitosa;
+    
+    |Motor Yupay (Sistema)|
+    :Actualiza el perfil del usuario\nactivando la suscripción Pro o Básico;
+    :Registra el pago en el historial\ny establece el ciclo de facturación;
+    :Envía recibo y confirmación de pago;
+    
+    |Usuario|
+    :Recibe la confirmación y desbloquea\nlos beneficios avanzados;
+    
+    ' El break rompe el bucle repeat cuando el pago es exitoso
+    break
+  else (No)
+    |Pasarela de Pagos|
+    :Rechaza la transacción\n(fondos insuficientes, tarjeta inválida, etc.);
+    
+    |Motor Yupay (Sistema)|
+    :Registra el intento de pago fallido;
+    :Muestra notificación de error al usuario;
+    
+    |Usuario|
+    :Visualiza el motivo del rechazo;
+  endif
+repeat while (¿Intentar de nuevo con el pago?) is (Sí)
+
+stop
+@enduml

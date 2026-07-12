@@ -1,0 +1,28 @@
+@startuml "Business Case: Gestionar Acceso y Cuentas"
+
+' Actores externos al negocio 
+actor/ "Usuario" <<Business Actor>> as User
+
+' Límite del Modelo de Negocio
+rectangle "Modelo de Casos de Uso del Negocio - Yupay Finance" {
+  usecase/ "Gestionar Acceso \ny Cuentas" as BUC1
+}
+
+' Relaciones
+User --> BUC1
+
+' Estética 
+skinparam usecase {
+  BackgroundColor #C7F4FF
+  BorderColor #7A1631
+  StereotypeFontColor #2E7D32
+}
+skinparam actor {
+  BackgroundColor #C7F4FF
+  BorderColor #7A1631
+  StereotypeFontColor #2E7D32
+}
+skinparam Arrow {
+  Color #7A1631
+}
+@enduml

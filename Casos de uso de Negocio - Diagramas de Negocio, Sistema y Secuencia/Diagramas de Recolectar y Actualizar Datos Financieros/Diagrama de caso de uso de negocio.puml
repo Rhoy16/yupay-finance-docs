@@ -1,0 +1,28 @@
+@startuml "Business Case: Recolectar y Actualizar Datos Financieros"
+
+' Trabajadores internos del negocio
+actor/ "Analista de Datos" <<Business Worker>> as Analista
+
+' Límite del Modelo de Negocio
+rectangle "Modelo de Casos de Uso del Negocio - Yupay Finance" {
+  usecase/ "Recolectar y Actualizar \nDatos Financieros" as BUC6
+}
+
+' Relaciones
+Analista --> BUC6
+
+' Estética 
+skinparam usecase {
+  BackgroundColor #C7F4FF
+  BorderColor #7A1631
+  StereotypeFontColor #2E7D32
+}
+skinparam actor {
+  BackgroundColor #C7F4FF
+  BorderColor #7A1631
+  StereotypeFontColor #2E7D32
+}
+skinparam Arrow {
+  Color #7A1631
+}
+@enduml

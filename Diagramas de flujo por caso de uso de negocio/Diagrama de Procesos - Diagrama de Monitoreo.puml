@@ -1,0 +1,44 @@
+@startuml "Diagrama de Procesos - Monitorear Mercado y Emitir Alertas"
+skinparam SwimlaneTitleBackgroundColor #EEE
+skinparam ActivityBackgroundColor #FFF9C4
+skinparam ActivityBorderColor #7A1631
+skinparam Arrow {
+  Color #7A1631
+}
+
+|Motor Yupay (Sistema)|
+start
+:Monitorea fluctuaciones del mercado\nen segundo plano;
+
+if (¿Se detecta variación en alguna entidad?) then (Sí)
+  :Evalúa el tipo de variación:\nA) Cambio de tasa\nB) Cambio en semáforo de riesgo\nC) Intervención de la SBS;
+  
+  :Cruza datos para buscar qué usuarios PRO\ntienen esa entidad en sus\n"Simulaciones Guardadas";
+  
+  if (¿Existen usuarios afectados?) then (Sí)
+    :Genera alerta crítica de riesgo;
+    
+    fork
+      :Emite notificación visual\n(campana de alerta) en el panel\nde simulaciones guardadas;
+    fork again
+      :Envía correo electrónico de\nemergencia con el detalle\ndel riesgo detectado;
+    end fork
+    
+    |Usuario|
+    :Recibe el correo de emergencia\no visualiza la alerta en su panel;
+    :Revisa los detalles del riesgo y\ntoma decisiones sobre su plan de inversión;
+    stop
+    
+  else (No)
+    |Motor Yupay (Sistema)|
+    :Registra el cambio en el sistema\npara mantener la base de datos actualizada;
+    stop
+  endif
+  
+else (No)
+  |Motor Yupay (Sistema)|
+  :Continúa la vigilancia pasiva\ndel mercado;
+  stop
+endif
+
+@enduml
