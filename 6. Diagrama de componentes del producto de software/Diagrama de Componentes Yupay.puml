@@ -1,75 +1,89 @@
-@startuml "Diagrama de Despliegue - Yupay Finance (Azure)"
+@startuml "Diagrama de Componentes - Yupay Finance API"
+skinparam componentStyle uml2
 skinparam linetype ortho
+left to right direction
 
-node "Browser / Mobile App" as Browser
-node "Azure Front Door (CDN)" as CDN
-node "Azure API Management" as ApiGateway
+interface "API Contract" as Contract
 
-node "Identity Azure Container Apps" as IAMContainer {
-  artifact "IdentityMicroserviceJAR" {
-    component "Interface" as IAInterface
-    component "Application Service" as IAApplication
-    component "Domain Model" as IADomain
-    component "Infrastructure" as IAInfrastructure
+component "Yupay Finance RESTful API" as API {
+  
+  component "Identity & Access Bounded Context" as BC_IdentityAccess {
+    component "Interface Layer" as IA_Interface
+    component "Application Layer" as IA_Application
+    component "Domain Layer" as IA_Domain
+    component "Infrastructure Layer" as IA_Infrastructure
+  }
+
+  component "Simulation Bounded Context" as BC_Simulation {
+    component "Interface Layer" as S_Interface
+    component "Application Layer" as S_Application
+    component "Domain Layer" as S_Domain
+    component "Infrastructure Layer" as S_Infrastructure
+  }
+
+  component "Catalog & Risk Bounded Context" as BC_CatalogRisk {
+    component "Interface Layer" as CR_Interface
+    component "Application Layer" as CR_Application
+    component "Domain Layer" as CR_Domain
+    component "Infrastructure Layer" as CR_Infrastructure
+  }
+
+  component "Billing & Subscriptions Bounded Context" as BC_Billing {
+    component "Interface Layer" as B_Interface
+    component "Application Layer" as B_Application
+    component "Domain Layer" as B_Domain
+    component "Infrastructure Layer" as B_Infrastructure
+  }
+
+  component "Monitoring & Alerts Bounded Context" as BC_MonitoringAlerts {
+    component "Interface Layer" as MA_Interface
+    component "Application Layer" as MA_Application
+    component "Domain Layer" as MA_Domain
+    component "Infrastructure Layer" as MA_Infrastructure
   }
 }
 
-node "Simulation Azure Container Apps" as SimulationContainer {
-  artifact "SimulationMicroserviceJAR" {
-    component "Interface" as SimInterface
-    component "Application Service" as SimApplication
-    component "Domain Model" as SimDomain
-    component "Infrastructure" as SimInfrastructure
-  }
-}
+database "Relational Database\n(PostgreSQL)" as RelationalDatabase <<external>>
+component "Payment Gateway API\n(Stripe / Niubiz)" as PaymentGateway <<external>>
+component "Email Service API\n(SendGrid / AWS SES)" as EmailService <<external>>
 
-node "Catalog & Risk Azure Container Apps" as CatalogContainer {
-  artifact "CatalogMicroserviceJAR" {
-    component "Interface" as CatInterface
-    component "Application Service" as CatApplication
-    component "Domain Model" as CatDomain
-    component "Infrastructure" as CatInfrastructure
-  }
-}
+' Conexión del API general con el exterior
+API --> Contract
 
-node "Billing Azure Container Apps" as BillingContainer {
-  artifact "BillingMicroserviceJAR" {
-    component "Interface" as BillInterface
-    component "Application Service" as BillApplication
-    component "Domain Model" as BillDomain
-    component "Infrastructure" as BillInfrastructure
-  }
-}
+' Conexiones internas Clean Architecture: Identity
+IA_Interface ..> IA_Application
+IA_Application ..> IA_Domain
+IA_Application ..> IA_Infrastructure
 
-node "Notification Azure Container Apps" as NotificationContainer {
-  artifact "NotificationMicroserviceJAR" {
-    component "Interface" as NotifInterface
-    component "Application Service" as NotifApplication
-    component "Domain Model" as NotifDomain
-    component "Infrastructure" as NotifInfrastructure
-  }
-}
+' Conexiones internas Clean Architecture: Simulation
+S_Interface ..> S_Application
+S_Application ..> S_Domain
+S_Application ..> S_Infrastructure
 
-database "Azure Database for PostgreSQL" as RelationalDatabase
-cloud "Payment Gateway\n(Stripe / Niubiz)" as PaymentProvider
-cloud "SendGrid" as SendGrid
+' Conexiones internas Clean Architecture: Catalog & Risk[cite: 12]
+CR_Interface ..> CR_Application
+CR_Application ..> CR_Domain
+CR_Application ..> CR_Infrastructure
 
-Browser --> CDN : HTTPS
-Browser --> ApiGateway : HTTPS
+' Conexiones internas Clean Architecture: Billing[cite: 12]
+B_Interface ..> B_Application
+B_Application ..> B_Domain
+B_Application ..> B_Infrastructure
 
-ApiGateway --> IAMContainer : HTTPS
-ApiGateway --> SimulationContainer : HTTPS
-ApiGateway --> CatalogContainer : HTTPS
-ApiGateway --> BillingContainer : HTTPS
-ApiGateway --> NotificationContainer : HTTPS
+' Conexiones internas Clean Architecture: Monitoring[cite: 12]
+MA_Interface ..> MA_Application
+MA_Application ..> MA_Domain
+MA_Application ..> MA_Infrastructure
 
-IAMContainer --> RelationalDatabase : TCP/IP
-SimulationContainer --> RelationalDatabase : TCP/IP
-CatalogContainer --> RelationalDatabase : TCP/IP
-BillingContainer --> RelationalDatabase : TCP/IP
-NotificationContainer --> RelationalDatabase : TCP/IP
+' Conexiones hacia la Infraestructura Externa (Base de Datos)[cite: 12]
+IA_Infrastructure ..> RelationalDatabase
+S_Infrastructure ..> RelationalDatabase
+CR_Infrastructure ..> RelationalDatabase
+B_Infrastructure ..> RelationalDatabase
+MA_Infrastructure ..> RelationalDatabase
 
-BillingContainer --> PaymentProvider : HTTPS
-NotificationContainer --> SendGrid : HTTPS
+' Conexiones hacia Servicios de Terceros
+B_Infrastructure ..> PaymentGateway
+MA_Infrastructure ..> EmailService
 
 @enduml
