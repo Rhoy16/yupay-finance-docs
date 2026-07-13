@@ -1,4 +1,4 @@
-@startuml "Class Diagram - Monitoring and Alerts Bounded Context"
+@startuml "Class Diagram - Contexto de Monitoreo y Alertas"
 
 package MonitoringAlertsBC {
     
