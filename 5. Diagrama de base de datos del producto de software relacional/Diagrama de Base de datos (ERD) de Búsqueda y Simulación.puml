@@ -1,4 +1,4 @@
-@startuml "Diagrama Físico de Base de Datos - Yupay Finance"
+@startuml "ERD - Busqueda y Simulación"
 skinparam linetype ortho
 
 entity users {

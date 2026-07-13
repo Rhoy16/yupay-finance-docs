@@ -1,4 +1,4 @@
-@startuml "ERD - Contexto de Suscripciones y Facturación"
+@startuml "ERD - Suscripciones y Facturación"
 skinparam linetype ortho
 
 entity subscriptions {

@@ -1,4 +1,4 @@
-@startuml "ERD - Contexto de Monitoreo y Alertas"
+@startuml "ERD - Monitoreo y Alertas"
 skinparam linetype ortho
 
 entity market_events {
