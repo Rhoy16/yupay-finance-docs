@@ -3,9 +3,12 @@ skinparam componentStyle uml2
 skinparam linetype ortho
 left to right direction
 
-interface "API Contract" as Contract
+' Frontend consumiendo la API
+component "React SPA (Vercel)" as SPA <<frontend>>
 
-component "Yupay Finance RESTful API" as API {
+interface "API Contract (REST/JSON)" as Contract
+
+component "Yupay Finance Backend (Node.js / Render)" as API {
   
   component "Identity & Access Bounded Context" as BC_IdentityAccess {
     component "Interface Layer" as IA_Interface
@@ -43,44 +46,45 @@ component "Yupay Finance RESTful API" as API {
   }
 }
 
-database "Relational Database\n(PostgreSQL)" as RelationalDatabase <<external>>
+' Herramientas de acceso a datos y servicios externos
+component "Prisma ORM" as Prisma <<orm>>
+database "Supabase\n(PostgreSQL)" as RelationalDatabase <<external>>
 component "Payment Gateway API\n(Stripe / Niubiz)" as PaymentGateway <<external>>
-component "Email Service API\n(SendGrid / AWS SES)" as EmailService <<external>>
+component "Email Service API\n(SendGrid)" as EmailService <<external>>
 
-' Conexión del API general con el exterior
-API --> Contract
+' Conexión del cliente con el API
+SPA --> Contract
+API -up-> Contract
 
-' Conexiones internas Clean Architecture: Identity
+' Conexiones internas Clean Architecture
 IA_Interface ..> IA_Application
 IA_Application ..> IA_Domain
 IA_Application ..> IA_Infrastructure
 
-' Conexiones internas Clean Architecture: Simulation
 S_Interface ..> S_Application
 S_Application ..> S_Domain
 S_Application ..> S_Infrastructure
 
-' Conexiones internas Clean Architecture: Catalog & Risk[cite: 12]
 CR_Interface ..> CR_Application
 CR_Application ..> CR_Domain
 CR_Application ..> CR_Infrastructure
 
-' Conexiones internas Clean Architecture: Billing[cite: 12]
 B_Interface ..> B_Application
 B_Application ..> B_Domain
 B_Application ..> B_Infrastructure
 
-' Conexiones internas Clean Architecture: Monitoring[cite: 12]
 MA_Interface ..> MA_Application
 MA_Application ..> MA_Domain
 MA_Application ..> MA_Infrastructure
 
-' Conexiones hacia la Infraestructura Externa (Base de Datos)[cite: 12]
-IA_Infrastructure ..> RelationalDatabase
-S_Infrastructure ..> RelationalDatabase
-CR_Infrastructure ..> RelationalDatabase
-B_Infrastructure ..> RelationalDatabase
-MA_Infrastructure ..> RelationalDatabase
+' Conexiones hacia Prisma y Supabase
+IA_Infrastructure ..> Prisma
+S_Infrastructure ..> Prisma
+CR_Infrastructure ..> Prisma
+B_Infrastructure ..> Prisma
+MA_Infrastructure ..> Prisma
+
+Prisma ..> RelationalDatabase
 
 ' Conexiones hacia Servicios de Terceros
 B_Infrastructure ..> PaymentGateway
