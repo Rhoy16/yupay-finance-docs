@@ -1,75 +1,45 @@
-@startuml "Diagrama de Despliegue - Yupay Finance (Azure)"
+@startuml "Diagrama de Despliegue - Yupay Finance"
 skinparam linetype ortho
 
-node "Browser / Mobile App" as Browser
-node "Azure Front Door (CDN)" as CDN
-node "Azure API Management" as ApiGateway
+node "Navegador del Usuario / Cliente" as Browser
 
-node "Identity Azure Container Apps" as IAMContainer {
-  artifact "IdentityMicroserviceJAR" {
-    component "Interface" as IAInterface
-    component "Application Service" as IAApplication
-    component "Domain Model" as IADomain
-    component "Infrastructure" as IAInfrastructure
+cloud "Vercel (Frontend Hosting)" as VercelNode {
+  artifact "yupay-frontend" {
+    component "React SPA (Single Page Application)" as ReactApp
   }
 }
 
-node "Simulation Azure Container Apps" as SimulationContainer {
-  artifact "SimulationMicroserviceJAR" {
-    component "Interface" as SimInterface
-    component "Application Service" as SimApplication
-    component "Domain Model" as SimDomain
-    component "Infrastructure" as SimInfrastructure
+cloud "Render (Web Service)" as RenderNode {
+  artifact "yupay-backend (Node.js)" {
+    package "Monolito Modular (API RESTful)" {
+      component "Identity & Access Module" as IAM
+      component "Simulation Module" as Sim
+      component "Catalog & Risk Module" as Cat
+      component "Billing & Subscriptions Module" as Bill
+      component "Monitoring & Alerts Module" as Notif
+    }
+    component "Prisma ORM" as Prisma
   }
 }
 
-node "Catalog & Risk Azure Container Apps" as CatalogContainer {
-  artifact "CatalogMicroserviceJAR" {
-    component "Interface" as CatInterface
-    component "Application Service" as CatApplication
-    component "Domain Model" as CatDomain
-    component "Infrastructure" as CatInfrastructure
-  }
+cloud "Supabase (DBaaS)" as SupabaseNode {
+  database "PostgreSQL Database" as PostgresDB
 }
 
-node "Billing Azure Container Apps" as BillingContainer {
-  artifact "BillingMicroserviceJAR" {
-    component "Interface" as BillInterface
-    component "Application Service" as BillApplication
-    component "Domain Model" as BillDomain
-    component "Infrastructure" as BillInfrastructure
-  }
-}
-
-node "Notification Azure Container Apps" as NotificationContainer {
-  artifact "NotificationMicroserviceJAR" {
-    component "Interface" as NotifInterface
-    component "Application Service" as NotifApplication
-    component "Domain Model" as NotifDomain
-    component "Infrastructure" as NotifInfrastructure
-  }
-}
-
-database "Azure Database for PostgreSQL" as RelationalDatabase
 cloud "Payment Gateway\n(Stripe / Niubiz)" as PaymentProvider
-cloud "SendGrid" as SendGrid
+cloud "SendGrid / Email Service" as SendGrid
 
-Browser --> CDN : HTTPS
-Browser --> ApiGateway : HTTPS
+' Interacciones del Usuario
+Browser --> VercelNode : 1. Solicita la web (HTTPS)
+VercelNode ..> Browser : 2. Descarga SPA al navegador
+Browser --> RenderNode : 3. Peticiones API (HTTPS / REST)
 
-ApiGateway --> IAMContainer : HTTPS
-ApiGateway --> SimulationContainer : HTTPS
-ApiGateway --> CatalogContainer : HTTPS
-ApiGateway --> BillingContainer : HTTPS
-ApiGateway --> NotificationContainer : HTTPS
+' Conexión Interna a Base de Datos
+RenderNode --> SupabaseNode : 4. Consultas a BD (TCP/IP)
+Prisma ..> PostgresDB : Gestiona esquemas y queries
 
-IAMContainer --> RelationalDatabase : TCP/IP
-SimulationContainer --> RelationalDatabase : TCP/IP
-CatalogContainer --> RelationalDatabase : TCP/IP
-BillingContainer --> RelationalDatabase : TCP/IP
-NotificationContainer --> RelationalDatabase : TCP/IP
-
-BillingContainer --> PaymentProvider : HTTPS
-NotificationContainer --> SendGrid : HTTPS
+' Conexiones a Servicios Externos (Release 02)
+Bill --> PaymentProvider : HTTPS (Procesa pagos de suscripción Pro)
+Notif --> SendGrid : HTTPS (Envía correos de alerta crítica)
 
 @enduml
